@@ -96,7 +96,7 @@ option(ENABLE_THREADED_RESOLVER "Set to ON to enable POSIX threaded DNS lookup" 
 option(ENABLE_DEBUG "Set to ON to enable curl debug features" OFF)
 option(ENABLE_CURLDEBUG "Set to ON to build with TrackMemory feature enabled" OFF)
 
-
+option(CURL_WITH_LIBIDN "Enable IDN" OFF)
 
 
 
@@ -468,8 +468,10 @@ if(NOT CURL_DISABLE_LDAPS)
   check_include_file_concat("ldapssl.h"  HAVE_LDAPSSL_H)
 endif()
 
-# Check for idn
-check_library_exists_concat("idn" idna_to_ascii_lz HAVE_LIBIDN)
+if(CURL_WITH_LIBIDN)
+  # Check for idn
+  check_library_exists_concat("idn" idna_to_ascii_lz HAVE_LIBIDN)
+endif()
 
 # Check for symbol dlopen (same as HAVE_LIBDL)
 check_library_exists("${CURL_LIBS}" dlopen "" HAVE_DLOPEN)
