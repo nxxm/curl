@@ -877,7 +877,7 @@
 #cmakedefine SIZEOF_SHORT ${SIZEOF_SHORT}
 
 /* The size of `long', as computed by sizeof. */
-#cmakedefine SIZEOF_LONG ${SIZEOF_LONG}
+#cmakedefine CURL_SIZEOF_LONG ${CURL_SIZEOF_LONG}
 
 /* The size of `off_t', as computed by sizeof. */
 #cmakedefine SIZEOF_OFF_T ${SIZEOF_OFF_T}
