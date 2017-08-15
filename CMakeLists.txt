@@ -133,7 +133,7 @@ option(BUILD_DASHBOARD_REPORTS "Set to ON to activate reporting of cURL builds h
 if(BUILD_DASHBOARD_REPORTS)
   #INCLUDE(Dart)
   include(CTest)
-endif(BUILD_DASHBOARD_REPORTS)
+endif()
 
 if(MSVC)
   option(BUILD_RELEASE_DEBUG_DIRS "Set OFF to build each configuration to a separate directory" OFF)
@@ -254,12 +254,12 @@ set(CMAKE_REQUIRED_FLAGS ${CMAKE_ANSI_CFLAGS})
 # Disable warnings on Borland to avoid changing 3rd party code.
 if(BORLAND)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w-")
-endif(BORLAND)
+endif()
 
 # If we are on AIX, do the _ALL_SOURCE magic
 if(${CMAKE_SYSTEM_NAME} MATCHES AIX)
   set(_ALL_SOURCE 1)
-endif(${CMAKE_SYSTEM_NAME} MATCHES AIX)
+endif()
 
 # Include all the necessary files for macros
 include (CheckFunctionExists)
@@ -275,7 +275,7 @@ include (CMakeDependentOption)
 if(WIN32)
   set(CMAKE_REQUIRED_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS} -D_WINSOCKAPI_")
   include(${CMAKE_CURRENT_SOURCE_DIR}/CMake/Platforms/WindowsCache.cmake)
-endif(WIN32)
+endif()
 
 if(ENABLE_THREADED_RESOLVER)
   check_include_file_concat("pthread.h" HAVE_PTHREAD_H)
@@ -299,11 +299,11 @@ if(BEOS)
   set(NOT_NEED_LIBNSL 1)
   check_library_exists_concat("bind" gethostbyname HAVE_LIBBIND)
   check_library_exists_concat("bnetapi" closesocket HAVE_LIBBNETAPI)
-endif(BEOS)
+endif()
 
 if(NOT NOT_NEED_LIBNSL)
   check_library_exists_concat("nsl"    gethostbyname  HAVE_LIBNSL)
-endif(NOT NOT_NEED_LIBNSL)
+endif()
 
 check_function_exists(gethostname HAVE_GETHOSTNAME)
 
@@ -528,7 +528,7 @@ if(CMAKE_USE_LIBSSH2)
     check_function_exists(libssh2_session_handshake HAVE_LIBSSH2_SESSION_HANDSHAKE)
     set(CMAKE_EXTRA_INCLUDE_FILES "")
 
-endif(CMAKE_USE_LIBSSH2)
+endif()
 
 option(CMAKE_USE_GSSAPI "Use GSSAPI implementation (right now only Heimdal is supported with CMake build)" OFF)
 mark_as_advanced(CMAKE_USE_GSSAPI)
@@ -616,7 +616,7 @@ if(NOT UNIX)
       endif()
     endif()
   endif()
-endif(NOT UNIX)
+endif()
 
 check_include_file_concat("stdio.h"          HAVE_STDIO_H)
 check_include_file_concat("inttypes.h"       HAVE_INTTYPES_H)
@@ -703,15 +703,14 @@ check_type_size("time_t"  SIZEOF_TIME_T)
 if(NOT HAVE_SIZEOF_SSIZE_T)
   if(SIZEOF_LONG EQUAL SIZEOF_SIZE_T)
     set(ssize_t long)
-  endif(SIZEOF_LONG EQUAL SIZEOF_SIZE_T)
+  endif()
   if(NOT ssize_t AND SIZEOF___INT64 EQUAL SIZEOF_SIZE_T)
     set(ssize_t __int64)
-  endif(NOT ssize_t AND SIZEOF___INT64 EQUAL SIZEOF_SIZE_T)
-endif(NOT HAVE_SIZEOF_SSIZE_T)
+  endif()
+endif()
 
 # Different sizeofs, etc.
 
-#    define CURL_SIZEOF_LONG        4
 #    define CURL_TYPEOF_CURL_OFF_T  long long
 #    define CURL_FORMAT_CURL_OFF_T  "lld"
 #    define CURL_FORMAT_CURL_OFF_TU "llu"
@@ -730,7 +729,7 @@ if(SIZEOF_LONG EQUAL 8)
   set(CURL_FORMAT_OFF_T "%ld")
   set(CURL_SUFFIX_CURL_OFF_T L)
   set(CURL_SUFFIX_CURL_OFF_TU UL)
-endif(SIZEOF_LONG EQUAL 8)
+endif()
 
 if(SIZEOF_LONG_LONG EQUAL 8)
   set(CURL_TYPEOF_CURL_OFF_T "long long")
@@ -740,7 +739,7 @@ if(SIZEOF_LONG_LONG EQUAL 8)
   set(CURL_FORMAT_OFF_T "%lld")
   set(CURL_SUFFIX_CURL_OFF_T LL)
   set(CURL_SUFFIX_CURL_OFF_TU ULL)
-endif(SIZEOF_LONG_LONG EQUAL 8)
+endif()
 
 if(NOT CURL_TYPEOF_CURL_OFF_T)
   set(CURL_TYPEOF_CURL_OFF_T ${ssize_t})
@@ -751,12 +750,12 @@ if(NOT CURL_TYPEOF_CURL_OFF_T)
   set(CURL_FORMAT_OFF_T "%ld")
   set(CURL_SUFFIX_CURL_OFF_T L)
   set(CURL_SUFFIX_CURL_OFF_TU LU)
-endif(NOT CURL_TYPEOF_CURL_OFF_T)
+endif()
 
 if(HAVE_SIZEOF_LONG_LONG)
   set(HAVE_LONGLONG 1)
   set(HAVE_LL 1)
-endif(HAVE_SIZEOF_LONG_LONG)
+endif()
 
 find_file(RANDOM_FILE urandom /dev)
 mark_as_advanced(RANDOM_FILE)
@@ -784,7 +783,7 @@ check_symbol_exists(strncmpi      "${CURL_INCLUDES}" HAVE_STRNCMPI)
 check_symbol_exists(alarm         "${CURL_INCLUDES}" HAVE_ALARM)
 if(NOT HAVE_STRNCMPI)
   set(HAVE_STRCMPI)
-endif(NOT HAVE_STRNCMPI)
+endif()
 check_symbol_exists(gethostbyaddr "${CURL_INCLUDES}" HAVE_GETHOSTBYADDR)
 check_symbol_exists(gethostbyaddr_r "${CURL_INCLUDES}" HAVE_GETHOSTBYADDR_R)
 check_symbol_exists(gettimeofday  "${CURL_INCLUDES}" HAVE_GETTIMEOFDAY)
@@ -810,8 +809,8 @@ if(CMAKE_USE_OPENSSL)
     HAVE_CRYPTO_CLEANUP_ALL_EX_DATA)
   if(HAVE_LIBCRYPTO AND HAVE_LIBSSL)
     set(USE_OPENSSL 1)
-  endif(HAVE_LIBCRYPTO AND HAVE_LIBSSL)
-endif(CMAKE_USE_OPENSSL)
+  endif()
+endif()
 check_symbol_exists(gmtime_r      "${CURL_INCLUDES}" HAVE_GMTIME_R)
 check_symbol_exists(localtime_r   "${CURL_INCLUDES}" HAVE_LOCALTIME_R)
 
@@ -822,7 +821,7 @@ check_symbol_exists(signal        "${CURL_INCLUDES}" HAVE_SIGNAL_FUNC)
 check_symbol_exists(SIGALRM       "${CURL_INCLUDES}" HAVE_SIGNAL_MACRO)
 if(HAVE_SIGNAL_FUNC AND HAVE_SIGNAL_MACRO)
   set(HAVE_SIGNAL 1)
-endif(HAVE_SIGNAL_FUNC AND HAVE_SIGNAL_MACRO)
+endif()
 check_symbol_exists(uname          "${CURL_INCLUDES}" HAVE_UNAME)
 check_symbol_exists(strtoll        "${CURL_INCLUDES}" HAVE_STRTOLL)
 check_symbol_exists(_strtoi64      "${CURL_INCLUDES}" HAVE__STRTOI64)
@@ -853,21 +852,21 @@ check_function_exists(inet_pton HAVE_INET_PTON)
 # detecting those, but only if previous attempt failed.
 if(HAVE_SIGNAL_H)
   check_symbol_exists(sigaction "signal.h" HAVE_SIGACTION)
-endif(HAVE_SIGNAL_H)
+endif()
 
 if(NOT HAVE_SIGSETJMP)
   if(HAVE_SETJMP_H)
     check_symbol_exists(sigsetjmp "setjmp.h" HAVE_MACRO_SIGSETJMP)
     if(HAVE_MACRO_SIGSETJMP)
       set(HAVE_SIGSETJMP 1)
-    endif(HAVE_MACRO_SIGSETJMP)
-  endif(HAVE_SETJMP_H)
-endif(NOT HAVE_SIGSETJMP)
+    endif()
+  endif()
+endif()
 
 # If there is no stricmp(), do not allow LDAP to parse URLs
 if(NOT HAVE_STRICMP)
   set(HAVE_LDAP_URL_PARSE 1)
-endif(NOT HAVE_STRICMP)
+endif()
 
 # Do curl specific tests
 foreach(CURL_TEST
@@ -908,7 +907,7 @@ foreach(CURL_TEST
 endforeach(CURL_TEST)
 if(HAVE_FILE_OFFSET_BITS)
   set(_FILE_OFFSET_BITS 64)
-endif(HAVE_FILE_OFFSET_BITS)
+endif()
 foreach(CURL_TEST
     HAVE_GLIBC_STRERROR_R
     HAVE_POSIX_STRERROR_R
@@ -928,8 +927,8 @@ foreach(CURL_TEST
   if(NOT ${CURL_TEST})
     if(${CURL_TEST}_REENTRANT)
       set(NEED_REENTRANT 1)
-    endif(${CURL_TEST}_REENTRANT)
-  endif(NOT ${CURL_TEST})
+    endif()
+  endif()
 endforeach(CURL_TEST)
 
 if(NEED_REENTRANT)
@@ -943,36 +942,36 @@ if(NEED_REENTRANT)
     set(${CURL_TEST} 0)
     if(${CURL_TEST}_REENTRANT)
       set(${CURL_TEST} 1)
-    endif(${CURL_TEST}_REENTRANT)
+    endif()
   endforeach(CURL_TEST)
-endif(NEED_REENTRANT)
+endif()
 
 if(HAVE_INET_NTOA_R_DECL_REENTRANT)
   set(HAVE_INET_NTOA_R_DECL 1)
   set(NEED_REENTRANT 1)
-endif(HAVE_INET_NTOA_R_DECL_REENTRANT)
+endif()
 
 # Some other minor tests
 
 if(NOT HAVE_IN_ADDR_T)
   set(in_addr_t "unsigned long")
-endif(NOT HAVE_IN_ADDR_T)
+endif()
 
 # Fix libz / zlib.h
 
 if(NOT CURL_SPECIAL_LIBZ)
   if(NOT HAVE_LIBZ)
     set(HAVE_ZLIB_H 0)
-  endif(NOT HAVE_LIBZ)
+  endif()
 
   if(NOT HAVE_ZLIB_H)
     set(HAVE_LIBZ 0)
-  endif(NOT HAVE_ZLIB_H)
-endif(NOT CURL_SPECIAL_LIBZ)
+  endif()
+endif()
 
 if(_FILE_OFFSET_BITS)
   set(_FILE_OFFSET_BITS 64)
-endif(_FILE_OFFSET_BITS)
+endif()
 set(CMAKE_REQUIRED_FLAGS "-D_FILE_OFFSET_BITS=64")
 set(CMAKE_EXTRA_INCLUDE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/curl/curl.h")
 check_type_size("curl_off_t" SIZEOF_CURL_OFF_T)
@@ -987,16 +986,13 @@ if(HAVE_FIONBIO OR
     HAVE_IOCTLSOCKET_CASE OR
     HAVE_O_NONBLOCK)
   set(HAVE_DISABLED_NONBLOCKING)
-endif(HAVE_FIONBIO OR
-  HAVE_IOCTLSOCKET OR
-  HAVE_IOCTLSOCKET_CASE OR
-  HAVE_O_NONBLOCK)
+endif()
 
 if(RETSIGTYPE_TEST)
   set(RETSIGTYPE void)
 else(RETSIGTYPE_TEST)
   set(RETSIGTYPE int)
-endif(RETSIGTYPE_TEST)
+endif()
 
 if(CMAKE_COMPILER_IS_GNUCC AND APPLE)
   include(CheckCCompilerFlag)
@@ -1008,11 +1004,11 @@ if(CMAKE_COMPILER_IS_GNUCC AND APPLE)
       set(MPRINTF_COMPILE_FLAGS "${MPRINTF_COMPILE_FLAGS} -Wno-long-double")
     else(MPRINTF_COMPILE_FLAGS)
       set(MPRINTF_COMPILE_FLAGS "-Wno-long-double")
-    endif(MPRINTF_COMPILE_FLAGS)
+    endif()
     set_source_files_properties(mprintf.c PROPERTIES
       COMPILE_FLAGS ${MPRINTF_COMPILE_FLAGS})
-  endif(HAVE_C_FLAG_Wno_long_double)
-endif(CMAKE_COMPILER_IS_GNUCC AND APPLE)
+  endif()
+endif()
 
 if(HAVE_SOCKLEN_T)
   set(CURL_TYPEOF_CURL_SOCKLEN_T "socklen_t")
@@ -1050,11 +1046,11 @@ add_definitions(-DHAVE_CONFIG_H)
 # For windows, do not allow the compiler to use default target (Vista).
 if(WIN32)
   add_definitions(-D_WIN32_WINNT=0x0501)
-endif(WIN32)
+endif()
 
 if(MSVC)
   add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
-endif(MSVC)
+endif()
 
 # Ugly (but functional) way to include "Makefile.inc" by transforming it (= regenerate it).
 function(TRANSFORM_MAKEFILE_INC INPUT_FILE OUTPUT_FILE)
