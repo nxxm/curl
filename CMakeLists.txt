@@ -47,7 +47,7 @@ include(CMake/HunterGate.cmake)
 HunterGate(
     URL "https://github.com/ruslo/hunter/archive/v0.14.28.tar.gz"
     SHA1 "2edf707a6df484d9e7509ce22e012c699ba60350"
-    
+
 )
 
 project( CURL C )
@@ -340,7 +340,7 @@ if(CMAKE_USE_OPENSSL)
     set(USE_OPENSSL ON)
     set(HAVE_LIBCRYPTO ON)
     set(HAVE_LIBSSL ON)
-    
+
     set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIR})
     check_include_file("openssl/crypto.h" HAVE_OPENSSL_CRYPTO_H)
     check_include_file("openssl/engine.h" HAVE_OPENSSL_ENGINE_H)
@@ -351,8 +351,8 @@ if(CMAKE_USE_OPENSSL)
     check_include_file("openssl/ssl.h"    HAVE_OPENSSL_SSL_H)
     check_include_file("openssl/x509.h"   HAVE_OPENSSL_X509_H)
     check_include_file("openssl/rand.h"   HAVE_OPENSSL_RAND_H)
-  
-  
+
+
   elseif(WIN32)
     set(CURL_WINDOWS_SSPI ON)
   endif()
@@ -378,7 +378,7 @@ if(NOT CURL_DISABLE_LDAP)
   if(CMAKE_USE_OPENLDAP AND USE_WIN32_LDAP)
     message(FATAL_ERROR "Cannot use USE_WIN32_LDAP and CMAKE_USE_OPENLDAP at the same time")
   endif()
-  
+
   # Now that we know, we're not using windows LDAP...
   if(NOT USE_WIN32_LDAP)
     # Check for LDAP
@@ -389,7 +389,7 @@ if(NOT CURL_DISABLE_LDAP)
     check_include_file_concat("winldap.h" HAVE_WINLDAP_H)
     check_include_file_concat("winber.h"  HAVE_WINBER_H)
   endif()
-  
+
   set(CMAKE_REQUIRED_INCLUDES_BAK ${CMAKE_REQUIRED_INCLUDES})
   set(CMAKE_LDAP_INCLUDE_DIR "" CACHE STRING "Path to LDAP include directory")
   if(CMAKE_LDAP_INCLUDE_DIR)
@@ -503,7 +503,7 @@ set(HAVE_LIBSSH2_H OFF)
 if(CMAKE_USE_LIBSSH2)
   hunter_add_package(Libssh2)
 
-  # when building static lib this may need to be linked with OpenSSL too. 
+  # when building static lib this may need to be linked with OpenSSL too.
   # ideally the find_package would use CONFIG if it could to use the Libssh2CONFIG.cmake file, but that is not always installed.
   find_package(Libssh2 CONFIG REQUIRED)
     list(APPEND CURL_LIBS Libssh2::libssh2)
@@ -1185,7 +1185,7 @@ if(NOT BUILD_SHARED_LIBS)
   message(WARNING "Static linking is broken!")
   set(ENABLE_STATIC         "yes")
   set(ENABLE_SHARED         "no")
-  
+
 else()
   set(ENABLE_STATIC         "no")
 endif()
@@ -1247,7 +1247,7 @@ if(MSVC_VERSION EQUAL 1600)
     file(APPEND "${CURL_SLN_FILENAME}" "\n# This should be regenerated!\n")
   endif()
 endif()
-  
+
 
 
 
