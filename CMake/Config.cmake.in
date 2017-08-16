@@ -1,4 +1,5 @@
 @PACKAGE_INIT@
+
 if(NOT @BUILD_SHARED_LIBS@)
     if(@HAVE_ZLIB@)
         find_package(ZLIB)
@@ -9,8 +10,10 @@ if(NOT @BUILD_SHARED_LIBS@)
     if(@HAVE_LIBCRYPTO@)
         find_package(OpenSSL)
     endif()
-
 endif()
+
+find_package(intsizeof CONFIG REQUIRED)
+
 include("${CMAKE_CURRENT_LIST_DIR}/@targets_export_name@.cmake")
 check_required_components("@PROJECT_NAME@")
 

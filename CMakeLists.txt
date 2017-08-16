@@ -45,14 +45,11 @@ include(Macros)
 
 include(CMake/HunterGate.cmake)
 HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.14.28.tar.gz"
-    SHA1 "2edf707a6df484d9e7509ce22e012c699ba60350"
-
+    URL "https://github.com/ruslo/hunter/archive/v0.19.72.tar.gz"
+    SHA1 "3ed5ea39abf52afab06c77e1b7d7e41e939752f1"
 )
 
 project( CURL C )
-
-
 
 message(WARNING "the curl cmake build system is poorly maintained. Be aware")
 
@@ -492,6 +489,10 @@ if(CURL_ZLIB)
     list(APPEND CMAKE_REQUIRED_INCLUDES ${ZLIB_INCLUDE_DIRS})
   endif()
 endif()
+
+hunter_add_package(intsizeof)
+find_package(intsizeof CONFIG REQUIRED)
+list(APPEND CURL_LIBS intsizeof::intsizeof)
 
 #libSSH2
 option(CMAKE_USE_LIBSSH2 "Use libSSH2" ON)
