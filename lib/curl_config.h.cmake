@@ -887,9 +887,6 @@
 /* The size of `size_t', as computed by sizeof. */
 #cmakedefine SIZEOF_SIZE_T INTSIZEOF_SIZE
 
-/* The size of `void*', as computed by sizeof. */
-#cmakedefine SIZEOF_VOIDP ${SIZEOF_VOIDP} // FIXME
-
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS 1
 
