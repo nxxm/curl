@@ -958,15 +958,9 @@ if(HAVE_SOCKLEN_T)
   elseif(HAVE_SYS_SOCKET_H)
     set(CMAKE_EXTRA_INCLUDE_FILES "sys/socket.h")
   endif()
-  check_type_size("socklen_t" CURL_SIZEOF_CURL_SOCKLEN_T)
   set(CMAKE_EXTRA_INCLUDE_FILES)
-  if(NOT HAVE_CURL_SIZEOF_CURL_SOCKLEN_T)
-    message(FATAL_ERROR
-     "Check for sizeof socklen_t failed, see CMakeFiles/CMakerror.log")
-  endif()
 else()
   set(CURL_TYPEOF_CURL_SOCKLEN_T int)
-  set(CURL_SIZEOF_CURL_SOCKLEN_T ${SIZEOF_INT})
 endif()
 
 # TODO test which of these headers are required for the typedefs used in curlbuild.h

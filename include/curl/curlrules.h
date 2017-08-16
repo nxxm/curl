@@ -85,11 +85,6 @@
    Error Compilation_aborted_CURL_TYPEOF_CURL_SOCKLEN_T_is_missing
 #endif
 
-#ifndef CURL_SIZEOF_CURL_SOCKLEN_T
-#  error "CURL_SIZEOF_CURL_SOCKLEN_T definition is missing!"
-   Error Compilation_aborted_CURL_SIZEOF_CURL_SOCKLEN_T_is_missing
-#endif
-
 #ifndef CURL_TYPEOF_CURL_OFF_T
 #  error "CURL_TYPEOF_CURL_OFF_T definition is missing!"
    Error Compilation_aborted_CURL_TYPEOF_CURL_OFF_T_is_missing
@@ -161,16 +156,6 @@ typedef char
 typedef char
   __curl_rule_03__
     [CurlchkszGE(curl_off_t, long)];
-
-/*
- * Verify that the size previously defined and expected for
- * curl_socklen_t is actually the the same as the one reported
- * by sizeof() at compile time.
- */
-
-typedef char
-  __curl_rule_04__
-    [CurlchkszEQ(curl_socklen_t, CURL_SIZEOF_CURL_SOCKLEN_T)];
 
 /*
  * Verify at compile time that the size of curl_socklen_t as reported
