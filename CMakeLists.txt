@@ -717,7 +717,6 @@ endif()
 #    define CURL_FORMAT_OFF_T       "%lld"
 #    define CURL_SIZEOF_CURL_OFF_T  8
 #    define CURL_SUFFIX_CURL_OFF_T  LL
-#    define CURL_SUFFIX_CURL_OFF_TU ULL
 
 if(CURL_SIZEOF_LONG EQUAL 8)
   set(CURL_TYPEOF_CURL_OFF_T long)
@@ -725,8 +724,6 @@ if(CURL_SIZEOF_LONG EQUAL 8)
   set(CURL_FORMAT_CURL_OFF_T "ld")
   set(CURL_FORMAT_CURL_OFF_TU "lu")
   set(CURL_FORMAT_OFF_T "%ld")
-  set(CURL_SUFFIX_CURL_OFF_T L)
-  set(CURL_SUFFIX_CURL_OFF_TU UL)
 endif()
 
 if(SIZEOF_LONG_LONG EQUAL 8)
@@ -735,19 +732,14 @@ if(SIZEOF_LONG_LONG EQUAL 8)
   set(CURL_FORMAT_CURL_OFF_T "lld")
   set(CURL_FORMAT_CURL_OFF_TU "llu")
   set(CURL_FORMAT_OFF_T "%lld")
-  set(CURL_SUFFIX_CURL_OFF_T LL)
-  set(CURL_SUFFIX_CURL_OFF_TU ULL)
 endif()
 
 if(NOT CURL_TYPEOF_CURL_OFF_T)
   set(CURL_TYPEOF_CURL_OFF_T ${ssize_t})
   set(CURL_SIZEOF_CURL_OFF_T ${SIZEOF_SSIZE_T})
-  # TODO: need adjustment here.
   set(CURL_FORMAT_CURL_OFF_T "ld")
   set(CURL_FORMAT_CURL_OFF_TU "lu")
   set(CURL_FORMAT_OFF_T "%ld")
-  set(CURL_SUFFIX_CURL_OFF_T L)
-  set(CURL_SUFFIX_CURL_OFF_TU LU)
 endif()
 
 if(HAVE_SIZEOF_LONG_LONG)

@@ -158,6 +158,8 @@
 #  include <sys/poll.h>
 #endif
 
+#include <intsizeof.h> // INSIZEOF_LONG
+
 /* The size of `long', as computed by sizeof. */
 #define CURL_SIZEOF_LONG ${CURL_SIZEOF_LONG}
 
@@ -192,6 +194,15 @@ typedef CURL_TYPEOF_CURL_OFF_T curl_off_t;
 #define CURL_SUFFIX_CURL_OFF_T ${CURL_SUFFIX_CURL_OFF_T}
 
 /* unsigned curl_off_t constant suffix. */
-#define CURL_SUFFIX_CURL_OFF_TU ${CURL_SUFFIX_CURL_OFF_TU}
+#if INSIZEOF_LONG == 8
+# define CURL_SUFFIX_CURL_OFF_T L
+# define CURL_SUFFIX_CURL_OFF_TU UL
+#elif INTSIZEOF_LLONG == 8
+# define CURL_SUFFIX_CURL_OFF_T LL
+# define CURL_SUFFIX_CURL_OFF_TU ULL
+#else
+# define CURL_SUFFIX_CURL_OFF_T L
+# define CURL_SUFFIX_CURL_OFF_TU LU
+#endif
 
 #endif /* __CURL_CURLBUILD_H */
