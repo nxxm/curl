@@ -172,34 +172,46 @@
 /* Data type definition of curl_socklen_t. */
 typedef CURL_TYPEOF_CURL_SOCKLEN_T curl_socklen_t;
 
-/* Signed integral data type used for curl_off_t. */
-#define CURL_TYPEOF_CURL_OFF_T ${CURL_TYPEOF_CURL_OFF_T}
-
-/* Data type definition of curl_off_t. */
-typedef CURL_TYPEOF_CURL_OFF_T curl_off_t;
-
-/* The size of `curl_off_t', as computed by sizeof. */
-#define CURL_SIZEOF_CURL_OFF_T ${CURL_SIZEOF_CURL_OFF_T}
+#define HAVE_SIZEOF_SSIZE_T ${HAVE_SIZEOF_SSIZE_T}
 
 /* unsigned curl_off_t constant suffix. */
 #if INSIZEOF_LONG == 8
+# define CURL_SIZEOF_CURL_OFF_T 8
+# define CURL_TYPEOF_CURL_OFF_T long
 # define CURL_FORMAT_CURL_OFF_T "ld"
 # define CURL_FORMAT_CURL_OFF_TU "lu"
 # define CURL_FORMAT_OFF_T "%ld"
 # define CURL_SUFFIX_CURL_OFF_T L
 # define CURL_SUFFIX_CURL_OFF_TU UL
 #elif INTSIZEOF_LLONG == 8
+# define CURL_SIZEOF_CURL_OFF_T 8
+# define CURL_TYPEOF_CURL_OFF_T long long
 # define CURL_FORMAT_CURL_OFF_T "lld"
 # define CURL_FORMAT_CURL_OFF_TU "llu"
 # define CURL_FORMAT_OFF_T "%lld"
 # define CURL_SUFFIX_CURL_OFF_T LL
 # define CURL_SUFFIX_CURL_OFF_TU ULL
 #else
+# if HAVE_SIZEOF_SSIZE_T
+#  define CURL_SIZEOF_CURL_OFF_T INTSIZEOF_SIZE
+#  define CURL_TYPEOF_CURL_OFF_T ssize_t
+# elif INTSIZEOF_LONG == INTSIZEOF_SIZE
+#  define CURL_SIZEOF_CURL_OFF_T INTSIZEOF_LONG
+#  define CURL_TYPEOF_CURL_OFF_T long
+# elif INTSIZEOF_SIZE == 8
+#  define CURL_SIZEOF_CURL_OFF_T 8
+#  define CURL_TYPEOF_CURL_OFF_T int64_t
+# else
+#  error "Can't set ssize_t"
+# endif
 # define CURL_FORMAT_CURL_OFF_T "ld"
 # define CURL_FORMAT_CURL_OFF_TU "lu"
 # define CURL_FORMAT_OFF_T "%ld"
 # define CURL_SUFFIX_CURL_OFF_T L
 # define CURL_SUFFIX_CURL_OFF_TU LU
 #endif
+
+/* Data type definition of curl_off_t. */
+typedef CURL_TYPEOF_CURL_OFF_T curl_off_t;
 
 #endif /* __CURL_CURLBUILD_H */
