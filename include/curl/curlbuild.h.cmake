@@ -156,7 +156,7 @@
 #include <intsizeof.h> // INSIZEOF_LONG
 
 /* The size of `long', as computed by sizeof. */
-#define CURL_SIZEOF_LONG ${CURL_SIZEOF_LONG}
+#define CURL_SIZEOF_LONG INTSIZEOF_LONG
 
 /* Integral data type used for curl_socklen_t. */
 #define CURL_TYPEOF_CURL_SOCKLEN_T ${CURL_TYPEOF_CURL_SOCKLEN_T}
