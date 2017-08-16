@@ -118,13 +118,16 @@ struct timeval curlx_tvnow(void)
  */
 long curlx_tvdiff(struct timeval newer, struct timeval older)
 {
-#if SIZEOF_TIME_T < 8
+  if (sizeof(time_t) < 8) {
+
   /* for 32bit time_t systems, add a precaution to avoid overflow for really
      big time differences */
   time_t diff = newer.tv_sec-older.tv_sec;
   if(diff >= (0x7fffffff/1000))
     return 0x7fffffff;
-#endif
+
+  }
+
   return (newer.tv_sec-older.tv_sec)*1000+
     (long)(newer.tv_usec-older.tv_usec)/1000;
 }

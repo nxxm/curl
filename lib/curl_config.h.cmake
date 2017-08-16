@@ -1,5 +1,7 @@
 /* lib/curl_config.h.in.  Generated somehow by cmake.  */
 
+#include <intsizeof.h> // INTSIZEOF_INT
+
 /* when building libcurl itself */
 #cmakedefine BUILDING_LIBCURL 1
 
@@ -871,25 +873,22 @@
 #cmakedefine SEND_TYPE_RETV ${SEND_TYPE_RETV}
 
 /* The size of `int', as computed by sizeof. */
-#cmakedefine SIZEOF_INT ${SIZEOF_INT}
+#cmakedefine SIZEOF_INT INTSIZEOF_INT
 
 /* The size of `short', as computed by sizeof. */
-#cmakedefine SIZEOF_SHORT ${SIZEOF_SHORT}
+#cmakedefine SIZEOF_SHORT INTSIZEOF_SHRT
 
 /* The size of `long', as computed by sizeof. */
-#cmakedefine CURL_SIZEOF_LONG ${CURL_SIZEOF_LONG}
+#cmakedefine CURL_SIZEOF_LONG INTSIZEOF_LONG
 
 /* The size of `off_t', as computed by sizeof. */
-#cmakedefine SIZEOF_OFF_T ${SIZEOF_OFF_T}
+#cmakedefine SIZEOF_OFF_T ${SIZEOF_OFF_T} // FIXME
 
 /* The size of `size_t', as computed by sizeof. */
-#cmakedefine SIZEOF_SIZE_T ${SIZEOF_SIZE_T}
-
-/* The size of `time_t', as computed by sizeof. */
-#cmakedefine SIZEOF_TIME_T ${SIZEOF_TIME_T}
+#cmakedefine SIZEOF_SIZE_T INTSIZEOF_SIZE
 
 /* The size of `void*', as computed by sizeof. */
-#cmakedefine SIZEOF_VOIDP ${SIZEOF_VOIDP}
+#cmakedefine SIZEOF_VOIDP ${SIZEOF_VOIDP} // FIXME
 
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS 1
