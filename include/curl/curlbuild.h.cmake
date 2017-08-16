@@ -57,11 +57,6 @@
 /*  DEFINITION OF THESE SYMBOLS SHALL NOT TAKE PLACE ANYWHERE ELSE  */
 /* ================================================================ */
 
-#ifdef CURL_SIZEOF_LONG
-#error "CURL_SIZEOF_LONG shall not be defined except in curlbuild.h"
-   Error Compilation_aborted_CURL_SIZEOF_LONG_already_defined
-#endif
-
 #ifdef CURL_TYPEOF_CURL_SOCKLEN_T
 #error "CURL_TYPEOF_CURL_SOCKLEN_T shall not be defined except in curlbuild.h"
    Error Compilation_aborted_CURL_TYPEOF_CURL_SOCKLEN_T_already_defined
@@ -154,9 +149,6 @@
 #endif
 
 #include <intsizeof.h> // INSIZEOF_LONG
-
-/* The size of `long', as computed by sizeof. */
-#define CURL_SIZEOF_LONG INTSIZEOF_LONG
 
 /* Integral data type used for curl_socklen_t. */
 #define CURL_TYPEOF_CURL_SOCKLEN_T ${CURL_TYPEOF_CURL_SOCKLEN_T}
