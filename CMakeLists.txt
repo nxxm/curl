@@ -700,6 +700,7 @@ check_type_size("int"  SIZEOF_INT)
 check_type_size("__int64"  SIZEOF___INT64)
 check_type_size("long double"  SIZEOF_LONG_DOUBLE)
 check_type_size("time_t"  SIZEOF_TIME_T)
+
 if(NOT HAVE_SIZEOF_SSIZE_T)
   if(CURL_SIZEOF_LONG EQUAL SIZEOF_SIZE_T)
     set(ssize_t long)
@@ -709,37 +710,19 @@ if(NOT HAVE_SIZEOF_SSIZE_T)
   endif()
 endif()
 
-# Different sizeofs, etc.
-
-#    define CURL_TYPEOF_CURL_OFF_T  long long
-#    define CURL_FORMAT_CURL_OFF_T  "lld"
-#    define CURL_FORMAT_CURL_OFF_TU "llu"
-#    define CURL_FORMAT_OFF_T       "%lld"
-#    define CURL_SIZEOF_CURL_OFF_T  8
-#    define CURL_SUFFIX_CURL_OFF_T  LL
-
 if(CURL_SIZEOF_LONG EQUAL 8)
   set(CURL_TYPEOF_CURL_OFF_T long)
   set(CURL_SIZEOF_CURL_OFF_T 8)
-  set(CURL_FORMAT_CURL_OFF_T "ld")
-  set(CURL_FORMAT_CURL_OFF_TU "lu")
-  set(CURL_FORMAT_OFF_T "%ld")
 endif()
 
 if(SIZEOF_LONG_LONG EQUAL 8)
   set(CURL_TYPEOF_CURL_OFF_T "long long")
   set(CURL_SIZEOF_CURL_OFF_T 8)
-  set(CURL_FORMAT_CURL_OFF_T "lld")
-  set(CURL_FORMAT_CURL_OFF_TU "llu")
-  set(CURL_FORMAT_OFF_T "%lld")
 endif()
 
 if(NOT CURL_TYPEOF_CURL_OFF_T)
   set(CURL_TYPEOF_CURL_OFF_T ${ssize_t})
   set(CURL_SIZEOF_CURL_OFF_T ${SIZEOF_SSIZE_T})
-  set(CURL_FORMAT_CURL_OFF_T "ld")
-  set(CURL_FORMAT_CURL_OFF_TU "lu")
-  set(CURL_FORMAT_OFF_T "%ld")
 endif()
 
 if(HAVE_SIZEOF_LONG_LONG)

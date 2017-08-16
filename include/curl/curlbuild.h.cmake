@@ -178,29 +178,26 @@ typedef CURL_TYPEOF_CURL_SOCKLEN_T curl_socklen_t;
 /* Data type definition of curl_off_t. */
 typedef CURL_TYPEOF_CURL_OFF_T curl_off_t;
 
-/* curl_off_t formatting string directive without "%" conversion specifier. */
-#define CURL_FORMAT_CURL_OFF_T "${CURL_FORMAT_CURL_OFF_T}"
-
-/* unsigned curl_off_t formatting string without "%" conversion specifier. */
-#define CURL_FORMAT_CURL_OFF_TU "${CURL_FORMAT_CURL_OFF_TU}"
-
-/* curl_off_t formatting string directive with "%" conversion specifier. */
-#define CURL_FORMAT_OFF_T "${CURL_FORMAT_OFF_T}"
-
 /* The size of `curl_off_t', as computed by sizeof. */
 #define CURL_SIZEOF_CURL_OFF_T ${CURL_SIZEOF_CURL_OFF_T}
 
-/* curl_off_t constant suffix. */
-#define CURL_SUFFIX_CURL_OFF_T ${CURL_SUFFIX_CURL_OFF_T}
-
 /* unsigned curl_off_t constant suffix. */
 #if INSIZEOF_LONG == 8
+# define CURL_FORMAT_CURL_OFF_T "ld"
+# define CURL_FORMAT_CURL_OFF_TU "lu"
+# define CURL_FORMAT_OFF_T "%ld"
 # define CURL_SUFFIX_CURL_OFF_T L
 # define CURL_SUFFIX_CURL_OFF_TU UL
 #elif INTSIZEOF_LLONG == 8
+# define CURL_FORMAT_CURL_OFF_T "lld"
+# define CURL_FORMAT_CURL_OFF_TU "llu"
+# define CURL_FORMAT_OFF_T "%lld"
 # define CURL_SUFFIX_CURL_OFF_T LL
 # define CURL_SUFFIX_CURL_OFF_TU ULL
 #else
+# define CURL_FORMAT_CURL_OFF_T "ld"
+# define CURL_FORMAT_CURL_OFF_TU "lu"
+# define CURL_FORMAT_OFF_T "%ld"
 # define CURL_SUFFIX_CURL_OFF_T L
 # define CURL_SUFFIX_CURL_OFF_TU LU
 #endif
