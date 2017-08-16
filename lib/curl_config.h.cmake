@@ -881,9 +881,6 @@
 /* The size of `long', as computed by sizeof. */
 #cmakedefine CURL_SIZEOF_LONG INTSIZEOF_LONG
 
-/* The size of `off_t', as computed by sizeof. */
-#cmakedefine SIZEOF_OFF_T ${SIZEOF_OFF_T} // FIXME
-
 /* The size of `size_t', as computed by sizeof. */
 #cmakedefine SIZEOF_SIZE_T INTSIZEOF_SIZE
 
