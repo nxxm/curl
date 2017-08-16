@@ -689,9 +689,6 @@ check_include_file_concat("sockio.h"        HAVE_SOCKIO_H)
 check_include_file_concat("sys/utsname.h"   HAVE_SYS_UTSNAME_H)
 check_include_file_concat("idna.h"          HAVE_IDNA_H)
 
-
-
-check_type_size(size_t  SIZEOF_SIZE_T)
 check_type_size(ssize_t  SIZEOF_SSIZE_T)
 check_type_size("long long"  SIZEOF_LONG_LONG)
 check_type_size("long"  CURL_SIZEOF_LONG)
