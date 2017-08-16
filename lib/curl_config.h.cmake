@@ -873,16 +873,16 @@
 #cmakedefine SEND_TYPE_RETV ${SEND_TYPE_RETV}
 
 /* The size of `int', as computed by sizeof. */
-#cmakedefine SIZEOF_INT INTSIZEOF_INT
+#define SIZEOF_INT INTSIZEOF_INT
 
 /* The size of `short', as computed by sizeof. */
-#cmakedefine SIZEOF_SHORT INTSIZEOF_SHRT
+#define SIZEOF_SHORT INTSIZEOF_SHRT
 
 /* The size of `long', as computed by sizeof. */
-#cmakedefine CURL_SIZEOF_LONG INTSIZEOF_LONG
+#define CURL_SIZEOF_LONG INTSIZEOF_LONG
 
 /* The size of `size_t', as computed by sizeof. */
-#cmakedefine SIZEOF_SIZE_T INTSIZEOF_SIZE
+#define SIZEOF_SIZE_T INTSIZEOF_SIZE
 
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS 1
