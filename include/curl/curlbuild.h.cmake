@@ -148,7 +148,9 @@
 #  include <sys/poll.h>
 #endif
 
-#include <intsizeof.h> // INSIZEOF_LONG
+#include <intsizeof.h> // INTSIZEOF_LONG
+
+#define CURL_SIZEOF_LONG INTSIZEOF_LONG
 
 /* Integral data type used for curl_socklen_t. */
 #define CURL_TYPEOF_CURL_SOCKLEN_T ${CURL_TYPEOF_CURL_SOCKLEN_T}
@@ -159,7 +161,7 @@ typedef CURL_TYPEOF_CURL_SOCKLEN_T curl_socklen_t;
 #define HAVE_SIZEOF_SSIZE_T ${HAVE_SIZEOF_SSIZE_T}
 
 /* unsigned curl_off_t constant suffix. */
-#if INSIZEOF_LONG == 8
+#if INTSIZEOF_LONG == 8
 # define CURL_SIZEOF_CURL_OFF_T 8
 # define CURL_TYPEOF_CURL_OFF_T long
 # define CURL_FORMAT_CURL_OFF_T "ld"

@@ -878,9 +878,6 @@
 /* The size of `short', as computed by sizeof. */
 #define SIZEOF_SHORT INTSIZEOF_SHRT
 
-/* The size of `long', as computed by sizeof. */
-#define CURL_SIZEOF_LONG INTSIZEOF_LONG
-
 /* The size of `size_t', as computed by sizeof. */
 #define SIZEOF_SIZE_T INTSIZEOF_SIZE
 
