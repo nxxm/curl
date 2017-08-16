@@ -691,7 +691,6 @@ check_include_file_concat("idna.h"          HAVE_IDNA_H)
 
 check_type_size(ssize_t  SIZEOF_SSIZE_T) # Use only HAVE_SIZEOF_SSIZE_T
 check_type_size("long long"  SIZEOF_LONG_LONG) # Use only HAVE_SIZEOF_LONG_LONG
-check_type_size("int"  SIZEOF_INT)
 
 if(HAVE_SIZEOF_LONG_LONG)
   set(HAVE_LONGLONG 1)
