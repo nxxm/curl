@@ -967,9 +967,3 @@
 #ifndef __cplusplus
 #undef inline
 #endif
-
-/* Define to `unsigned int' if <sys/types.h> does not define. */
-#cmakedefine size_t ${size_t}
-
-/* the signed version of size_t */
-#cmakedefine ssize_t ${ssize_t}

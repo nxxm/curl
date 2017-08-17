@@ -197,6 +197,16 @@ typedef CURL_TYPEOF_CURL_SOCKLEN_T curl_socklen_t;
 # define CURL_SUFFIX_CURL_OFF_TU LU
 #endif
 
+#if !HAVE_SIZEOF_SSIZE_T
+# if INTSIZEOF_LONG == INTSIZEOF_SIZE
+typedef long ssize_t;
+# elif INTSIZEOF_SIZE == 8
+typedef int64_t ssize_t;
+# else
+#  error "Can't set ssize_t type"
+# endif
+#endif
+
 /* Data type definition of curl_off_t. */
 typedef CURL_TYPEOF_CURL_OFF_T curl_off_t;
 
