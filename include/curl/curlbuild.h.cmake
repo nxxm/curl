@@ -153,12 +153,12 @@
 #define CURL_SIZEOF_LONG INTSIZEOF_LONG
 
 /* Integral data type used for curl_socklen_t. */
-#define CURL_TYPEOF_CURL_SOCKLEN_T ${CURL_TYPEOF_CURL_SOCKLEN_T}
+#cmakedefine CURL_TYPEOF_CURL_SOCKLEN_T ${CURL_TYPEOF_CURL_SOCKLEN_T}
 
 /* Data type definition of curl_socklen_t. */
 typedef CURL_TYPEOF_CURL_SOCKLEN_T curl_socklen_t;
 
-#define HAVE_SIZEOF_SSIZE_T ${HAVE_SIZEOF_SSIZE_T}
+#cmakedefine01 HAVE_SIZEOF_SSIZE_T
 
 /* unsigned curl_off_t constant suffix. */
 #if INTSIZEOF_LONG == 8
