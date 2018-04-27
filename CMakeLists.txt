@@ -1016,6 +1016,12 @@ foreach(CURL_TEST
   curl_internal_test_run(${CURL_TEST})
 endforeach(CURL_TEST)
 
+if(RASPBERRY_PI)
+  # FIXME
+  set(HAVE_GLIBC_STRERROR_R 0 CACHE INTERNAL "")
+  set(HAVE_POSIX_STRERROR_R 1 CACHE INTERNAL "")
+endif()
+
 # Check for reentrant
 foreach(CURL_TEST
     HAVE_GETHOSTBYADDR_R_5
