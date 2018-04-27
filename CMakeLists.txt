@@ -1306,25 +1306,6 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/curl"
     DESTINATION include
     FILES_MATCHING PATTERN "*.h")
 
-
-include(CMakePackageConfigHelpers)
-write_basic_package_version_file(
-    "${PROJECT_BINARY_DIR}/curl-config-version.cmake"
-    VERSION ${CURL_VERSION}
-    COMPATIBILITY SameMajorVersion
-)
-
-configure_file(CMake/curl-config.cmake
-        "${PROJECT_BINARY_DIR}/curl-config.cmake"
-        COPYONLY
-)
-
-install(
-        FILES ${PROJECT_BINARY_DIR}/curl-config.cmake
-              ${PROJECT_BINARY_DIR}/curl-config-version.cmake
-        DESTINATION ${CURL_INSTALL_CMAKE_DIR}
-)
-
 # Workaround for MSVS10 to avoid the Dialog Hell
 # FIXME: This could be removed with future version of CMake.
 if(MSVC_VERSION EQUAL 1600)
