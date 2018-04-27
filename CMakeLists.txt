@@ -556,12 +556,21 @@ set(HAVE_LIBSSH2 OFF)
 set(HAVE_LIBSSH2_H OFF)
 
 if(CMAKE_USE_LIBSSH2)
-  find_package(LibSSH2)
+  hunter_add_package(Libssh2)
+  find_package(Libssh2 CONFIG REQUIRED)
+  set(LIBSSH2_FOUND TRUE)
   if(LIBSSH2_FOUND)
+    set(LIBSSH2_LIBRARY Libssh2::libssh2)
     list(APPEND CURL_LIBS ${LIBSSH2_LIBRARY})
     set(CMAKE_REQUIRED_LIBRARIES ${LIBSSH2_LIBRARY})
+
+    if(NOT HUNTER_ENABLED)
+
     list(APPEND CMAKE_REQUIRED_INCLUDES "${LIBSSH2_INCLUDE_DIR}")
     include_directories("${LIBSSH2_INCLUDE_DIR}")
+
+    endif()
+
     set(HAVE_LIBSSH2 ON)
     set(USE_LIBSSH2 ON)
 
