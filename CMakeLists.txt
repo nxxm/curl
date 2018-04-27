@@ -110,6 +110,8 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
   endif(PICKY_COMPILER)
 endif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
 
+option(CURL_WITH_LIBIDN "Enable IDN" OFF)
+
 if (ENABLE_DEBUG)
   # DEBUGBUILD will be defined only for Debug builds
   if(NOT CMAKE_VERSION VERSION_LESS 3.0)
@@ -506,8 +508,12 @@ if(NOT CURL_DISABLE_LDAPS)
   check_include_file_concat("ldapssl.h"  HAVE_LDAPSSL_H)
 endif()
 
+if(CURL_WITH_LIBIDN)
+
 # Check for idn
 check_library_exists_concat("idn2" idn2_lookup_ul HAVE_LIBIDN2)
+
+endif()
 
 # Check for symbol dlopen (same as HAVE_LIBDL)
 check_library_exists("${CURL_LIBS}" dlopen "" HAVE_DLOPEN)
