@@ -45,6 +45,12 @@ include(Macros)
 include(CMakeDependentOption)
 include(CheckCCompilerFlag)
 
+include(CMake/HunterGate.cmake)
+HunterGate(
+    URL "https://github.com/ruslo/hunter/archive/v0.22.30.tar.gz"
+    SHA1 "380a7687ea63898b59a3ee6e3d7c39b1faa1aadc"
+)
+
 project( CURL C )
 
 message(WARNING "the curl cmake build system is poorly maintained. Be aware")
