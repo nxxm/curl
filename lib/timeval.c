@@ -147,13 +147,21 @@ struct curltime Curl_now(void)
 
 #endif
 
-#if SIZEOF_TIME_T < 8
-#define TIME_MAX INT_MAX
-#define TIME_MIN INT_MIN
-#else
-#define TIME_MAX 9223372036854775807LL
-#define TIME_MIN -9223372036854775807LL
-#endif
+timediff_t __curl_time_min()
+{
+  if (sizeof(time_t) < 8) {
+    return INT_MIN;
+  }
+  return -9223372036854775807LL;
+}
+
+timediff_t __curl_time_max()
+{
+  if (sizeof(time_t) < 8) {
+    return INT_MAX;
+  }
+  return 9223372036854775807LL;
+}
 
 /*
  * Returns: time difference in number of milliseconds. For too large diffs it
@@ -164,10 +172,10 @@ struct curltime Curl_now(void)
 timediff_t Curl_timediff(struct curltime newer, struct curltime older)
 {
   timediff_t diff = newer.tv_sec-older.tv_sec;
-  if(diff >= (TIME_MAX/1000))
-    return TIME_MAX;
-  else if(diff <= (TIME_MIN/1000))
-    return TIME_MIN;
+  if(diff >= (__curl_time_max()/1000))
+    return __curl_time_max();
+  else if(diff <= (__curl_time_min()/1000))
+    return __curl_time_min();
   return diff * 1000 + (newer.tv_usec-older.tv_usec)/1000;
 }
 
@@ -178,9 +186,9 @@ timediff_t Curl_timediff(struct curltime newer, struct curltime older)
 timediff_t Curl_timediff_us(struct curltime newer, struct curltime older)
 {
   timediff_t diff = newer.tv_sec-older.tv_sec;
-  if(diff >= (TIME_MAX/1000000))
-    return TIME_MAX;
-  else if(diff <= (TIME_MIN/1000000))
-    return TIME_MIN;
+  if(diff >= (__curl_time_max()/1000000))
+    return __curl_time_max();
+  else if(diff <= (__curl_time_min()/1000000))
+    return __curl_time_min();
   return diff * 1000000 + newer.tv_usec-older.tv_usec;
 }

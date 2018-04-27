@@ -496,7 +496,7 @@ static int parsedate(const char *date, time_t *output)
   }
 #endif
 
-#if (SIZEOF_TIME_T < 5)
+if (sizeof(time_t) < 5) {
 
 #ifdef HAVE_TIME_T_UNSIGNED
   /* an unsigned 32 bit time_t can only hold dates to 2106 */
@@ -516,11 +516,12 @@ static int parsedate(const char *date, time_t *output)
   }
 #endif
 
-#else
+}
+else {
   /* The Gregorian calendar was introduced 1582 */
   if(yearnum < 1583)
     return PARSEDATE_FAIL;
-#endif
+}
 
   if((mdaynum > 31) || (monnum > 11) ||
      (hournum > 23) || (minnum > 59) || (secnum > 60))
