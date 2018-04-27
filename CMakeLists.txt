@@ -520,12 +520,22 @@ set(HAVE_LIBZ OFF)
 set(HAVE_ZLIB_H OFF)
 set(HAVE_ZLIB OFF)
 if(CURL_ZLIB)
-  find_package(ZLIB QUIET)
+  hunter_add_package(ZLIB)
+  find_package(ZLIB CONFIG REQUIRED)
   if(ZLIB_FOUND)
     set(HAVE_ZLIB_H ON)
     set(HAVE_ZLIB ON)
     set(HAVE_LIBZ ON)
+
+    if(HUNTER_ENABLED)
+      list(APPEND CURL_LIBS ZLIB::zlib)
+      set(ZLIB_INCLUDE_DIRS "${ZLIB_ROOT}/include")
+    else()
+
     list(APPEND CURL_LIBS ${ZLIB_LIBRARIES})
+
+    endif()
+
     include_directories(${ZLIB_INCLUDE_DIRS})
     list(APPEND CMAKE_REQUIRED_INCLUDES ${ZLIB_INCLUDE_DIRS})
   endif()
