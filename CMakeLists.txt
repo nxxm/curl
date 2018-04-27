@@ -548,6 +548,10 @@ if(CURL_ZLIB)
   endif()
 endif()
 
+hunter_add_package(intsizeof)
+find_package(intsizeof CONFIG REQUIRED)
+list(APPEND CURL_LIBS intsizeof::intsizeof)
+
 #libSSH2
 option(CMAKE_USE_LIBSSH2 "Use libSSH2" ON)
 mark_as_advanced(CMAKE_USE_LIBSSH2)
@@ -811,9 +815,17 @@ check_include_file_concat("stdint.h"        HAVE_STDINT_H)
 check_include_file_concat("sockio.h"        HAVE_SOCKIO_H)
 check_include_file_concat("sys/utsname.h"   HAVE_SYS_UTSNAME_H)
 
+if(NOT HUNTER_ENABLED)
+
 check_type_size(size_t  SIZEOF_SIZE_T)
+
+endif()
+
 check_type_size(ssize_t  SIZEOF_SSIZE_T)
 check_type_size("long long"  SIZEOF_LONG_LONG)
+
+if(NOT HUNTER_ENABLED)
+
 check_type_size("long"  SIZEOF_LONG)
 check_type_size("short"  SIZEOF_SHORT)
 check_type_size("int"  SIZEOF_INT)
@@ -829,6 +841,8 @@ if(NOT HAVE_SIZEOF_SSIZE_T)
   endif(NOT ssize_t AND SIZEOF___INT64 EQUAL SIZEOF_SIZE_T)
 endif(NOT HAVE_SIZEOF_SSIZE_T)
 # off_t is sized later, after the HAVE_FILE_OFFSET_BITS test
+
+endif()
 
 if(HAVE_SIZEOF_LONG_LONG)
   set(HAVE_LONGLONG 1)
