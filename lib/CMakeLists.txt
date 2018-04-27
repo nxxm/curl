@@ -59,7 +59,7 @@ if(USE_ARES)
   include_directories(${CARES_INCLUDE_DIR})
 endif()
 
-if(CURL_STATICLIB)
+if(NOT BUILD_SHARED_LIBS)
   # Static lib
   set(CURL_USER_DEFINED_DYNAMIC_OR_STATIC STATIC)
 else()
@@ -73,7 +73,7 @@ add_library(
   ${HHEADERS} ${CSOURCES}
   )
 
-if(MSVC AND CURL_STATICLIB)
+if(MSVC AND NOT BUILD_SHARED_LIBS)
   set_target_properties(${LIB_NAME} PROPERTIES STATIC_LIBRARY_FLAGS ${CMAKE_EXE_LINKER_FLAGS})
 endif()
 
@@ -94,8 +94,13 @@ endif()
 set_target_properties(${LIB_NAME} PROPERTIES PREFIX "")
 set_target_properties(${LIB_NAME} PROPERTIES IMPORT_PREFIX "")
 
+set_target_properties(${LIB_NAME} PROPERTIES IMPORT_PREFIX "")
+set_target_properties(${LIB_NAME} PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>$<INSTALL_INTERFACE:include>"
+)
+
 if(WIN32)
-  if(NOT CURL_STATICLIB)
+  if(BUILD_SHARED_LIBS)
     # Add "_imp" as a suffix before the extension to avoid conflicting with the statically linked "libcurl.lib"
     set_target_properties(${LIB_NAME} PROPERTIES IMPORT_SUFFIX "_imp.lib")
 
@@ -105,6 +110,9 @@ if(WIN32)
        # MINSIZEREL_POSTFIX "-z"
        # RELWITHDEBINFO_POSTFIX "-g"
        )
+  else()
+    # Add CURL_STATIC LIB to compile definitions if the libcurl is built statically
+    target_compile_definitions(${LIB_NAME} PUBLIC "CURL_STATICLIB")
   endif()
 endif()
 
@@ -112,10 +120,11 @@ target_include_directories(${LIB_NAME} INTERFACE
 	$<INSTALL_INTERFACE:include>)
 
 install(TARGETS ${LIB_NAME}
-  EXPORT libcurl-target
+  EXPORT "${targets_export_name}"
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
+  INCLUDES DESTINATION "${include_install_dir}"
 )
 
 export(TARGETS ${LIB_NAME}
