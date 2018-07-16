@@ -71,6 +71,7 @@ add_library(
   ${LIB_NAME}
   ${CURL_USER_DEFINED_DYNAMIC_OR_STATIC}
   ${HHEADERS} ${CSOURCES}
+  foo.cpp
   )
 
 if(MSVC AND NOT BUILD_SHARED_LIBS)

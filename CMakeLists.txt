@@ -51,7 +51,7 @@ HunterGate(
     SHA1 "380a7687ea63898b59a3ee6e3d7c39b1faa1aadc"
 )
 
-project( CURL C )
+project( CURL C CXX )
 
 message(WARNING "the curl cmake build system is poorly maintained. Be aware")
 
