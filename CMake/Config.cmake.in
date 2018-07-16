@@ -1,5 +1,9 @@
 @PACKAGE_INIT@
 
+if("@ENABLE_ARES@")
+  find_package(c-ares CONFIG REQUIRED)
+endif()
+
 if(@HAVE_ZLIB@)
     find_package(ZLIB CONFIG REQUIRED)
 endif()
