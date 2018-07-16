@@ -1001,7 +1001,18 @@
 #cmakedefine size_t ${size_t}
 
 /* the signed version of size_t */
-#cmakedefine ssize_t ${ssize_t}
+
+#cmakedefine HAVE_SIZEOF_SSIZE_T 1
+
+#if !defined(HAVE_SIZEOF_SSIZE_T)
+# if INTSIZEOF_LONG == INTSIZEOF_SIZE
+typedef long ssize_t;
+# elif INTSIZEOF_SIZE == 8
+typedef int64_t ssize_t;
+# else
+#  error "Can't set ssize_t type"
+# endif
+#endif
 
 /* Define to 1 if you have the mach_absolute_time function. */
 #cmakedefine HAVE_MACH_ABSOLUTE_TIME 1
