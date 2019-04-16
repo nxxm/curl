@@ -323,6 +323,8 @@ if(WIN32 OR CMAKE_USE_DARWINSSL OR CMAKE_USE_WINSSL OR CMAKE_USE_MBEDTLS)
 endif()
 option(CMAKE_USE_OPENSSL "Use OpenSSL code. Experimental" ${openssl_default})
 
+option(CMAKE_USE_BORINGSSL "Use BoringSSL" OFF)
+
 collect_true(enabled_ssl_options enabled_ssl_options_count
   CMAKE_USE_WINSSL
   CMAKE_USE_DARWINSSL
@@ -361,15 +363,44 @@ if(CMAKE_USE_DARWINSSL)
 endif()
 
 if(CMAKE_USE_OPENSSL)
-  hunter_add_package(OpenSSL)
-  find_package(OpenSSL REQUIRED)
+  if(CMAKE_USE_BORINGSSL)
+    hunter_add_package(BoringSSL)
+    find_package(BoringSSL CONFIG REQUIRED)
+    set(OPENSSL_INCLUDE_DIR "${BORINGSSL_ROOT}/include")
+    get_property(
+        imported_configurations
+        TARGET BoringSSL::crypto
+        PROPERTY IMPORTED_CONFIGURATIONS
+    )
+    list(GET imported_configurations 0 imported_configuration)
+    string(TOUPPER "${imported_configuration}" imported_configuration)
+    get_property(
+        crypto_lib
+        TARGET BoringSSL::crypto
+        PROPERTY IMPORTED_LOCATION_${imported_configuration}
+    )
+    get_property(
+        ssl_lib
+        TARGET BoringSSL::ssl
+        PROPERTY IMPORTED_LOCATION_${imported_configuration}
+    )
+    set(OPENSSL_LIBRARIES ${crypto_lib} ${ssl_lib})
+  else()
+    hunter_add_package(OpenSSL)
+    find_package(OpenSSL REQUIRED)
+  endif()
   set(SSL_ENABLED ON)
   set(USE_OPENSSL ON)
   set(HAVE_LIBCRYPTO ON)
   set(HAVE_LIBSSL ON)
   if(HUNTER_ENABLED)
-    list(APPEND CURL_LIBS OpenSSL::SSL OpenSSL::Crypto)
-    set(CMAKE_REQUIRED_INCLUDES "${OPENSSL_ROOT}/include")
+    if(CMAKE_USE_BORINGSSL)
+      list(APPEND CURL_LIBS BoringSSL::ssl BoringSSL::crypto)
+      set(CMAKE_REQUIRED_INCLUDES "${BORINGSSL_ROOT}/include")
+    else()
+      list(APPEND CURL_LIBS OpenSSL::SSL OpenSSL::Crypto)
+      set(CMAKE_REQUIRED_INCLUDES "${OPENSSL_ROOT}/include")
+    endif()
   else()
   list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES})
   include_directories(${OPENSSL_INCLUDE_DIR})
@@ -386,6 +417,10 @@ if(CMAKE_USE_OPENSSL)
   check_symbol_exists(RAND_status "${CURL_INCLUDES}" HAVE_RAND_STATUS)
   check_symbol_exists(RAND_screen "${CURL_INCLUDES}" HAVE_RAND_SCREEN)
   check_symbol_exists(RAND_egd    "${CURL_INCLUDES}" HAVE_RAND_EGD)
+
+  if(CMAKE_USE_BORINGSSL)
+    set(HAVE_OPENSSL_ENGINE_H FALSE)
+  endif()
 endif()
 
 if(CMAKE_USE_MBEDTLS)
@@ -1235,6 +1270,10 @@ set(targets_export_name "${PROJECT_NAME}Targets")
 set(namespace "${PROJECT_NAME}::")
 
 add_subdirectory(lib)
+
+if(CMAKE_USE_BORINGSSL)
+  target_compile_definitions(libcurl PRIVATE HAVE_BORINGSSL)
+endif()
 
 if(BUILD_CURL_EXE)
   add_subdirectory(src)
