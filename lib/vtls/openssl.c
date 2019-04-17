@@ -781,7 +781,7 @@ int cert_stuff(struct connectdata *conn,
       }
       break;
     case SSL_FILETYPE_ENGINE:
-#ifdef HAVE_OPENSSL_ENGINE_H
+#if defined(HAVE_OPENSSL_ENGINE_H) && !defined(OPENSSL_NO_ENGINE)
       {                         /* XXXX still needs some work */
         EVP_PKEY *priv_key = NULL;
         if(data->state.engine) {
@@ -1088,7 +1088,7 @@ static int Curl_ossl_check_cxn(struct connectdata *conn)
 static CURLcode Curl_ossl_set_engine(struct Curl_easy *data,
                                      const char *engine)
 {
-#if defined(USE_OPENSSL) && defined(HAVE_OPENSSL_ENGINE_H)
+#if defined(USE_OPENSSL) && defined(HAVE_OPENSSL_ENGINE_H) && !defined(OPENSSL_NO_ENGINE)
   ENGINE *e;
 
 #if OPENSSL_VERSION_NUMBER >= 0x00909000L
@@ -1133,7 +1133,7 @@ static CURLcode Curl_ossl_set_engine(struct Curl_easy *data,
  */
 static CURLcode Curl_ossl_set_engine_default(struct Curl_easy *data)
 {
-#ifdef HAVE_OPENSSL_ENGINE_H
+#if defined(HAVE_OPENSSL_ENGINE_H) && !defined(OPENSSL_NO_ENGINE)
   if(data->state.engine) {
     if(ENGINE_set_default(data->state.engine, ENGINE_METHOD_ALL) > 0) {
       infof(data, "set default crypto engine '%s'\n",
@@ -1156,7 +1156,7 @@ static CURLcode Curl_ossl_set_engine_default(struct Curl_easy *data)
 static struct curl_slist *Curl_ossl_engines_list(struct Curl_easy *data)
 {
   struct curl_slist *list = NULL;
-#if defined(USE_OPENSSL) && defined(HAVE_OPENSSL_ENGINE_H)
+#if defined(USE_OPENSSL) && defined(HAVE_OPENSSL_ENGINE_H) && !defined(OPENSSL_NO_ENGINE)
   struct curl_slist *beg;
   ENGINE *e;
 
@@ -1312,7 +1312,7 @@ static void Curl_ossl_session_free(void *ptr)
  */
 static void Curl_ossl_close_all(struct Curl_easy *data)
 {
-#ifdef HAVE_OPENSSL_ENGINE_H
+#if defined(HAVE_OPENSSL_ENGINE_H) && !defined(OPENSSL_NO_ENGINE)
   if(data->state.engine) {
     ENGINE_finish(data->state.engine);
     ENGINE_free(data->state.engine);
