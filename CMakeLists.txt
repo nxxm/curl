@@ -45,10 +45,10 @@ include(Macros)
 include(CMakeDependentOption)
 include(CheckCCompilerFlag)
 
-include(CMake/HunterGate.cmake)
+include(HunterGate)
 HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.22.30.tar.gz"
-    SHA1 "380a7687ea63898b59a3ee6e3d7c39b1faa1aadc"
+    URL "unused" 
+    SHA1 "unused" 
 )
 
 project(CURL C)
@@ -406,11 +406,14 @@ if(CURL_WINDOWS_SSPI)
   set(CMAKE_REQUIRED_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS} -DSECURITY_WIN32")
 endif()
 
-if(CMAKE_USE_DARWINSSL)
-  message(FATAL_ERROR "The cmake option CMAKE_USE_DARWINSSL was renamed to CMAKE_USE_SECTRANSP.")
+
+if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  list(APPEND CURL_LIBS "-framework CoreFoundation" "-framework SystemConfiguration" )
 endif()
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+if(CMAKE_USE_DARWINSSL)
+  message(FATAL_ERROR "The cmake option CMAKE_USE_DARWINSSL was renamed to CMAKE_USE_SECTRANSP.")
+
   find_library(COREFOUNDATION_FRAMEWORK "CoreFoundation")
   if(NOT COREFOUNDATION_FRAMEWORK)
       message(FATAL_ERROR "CoreFoundation framework not found")
@@ -471,16 +474,11 @@ if(CMAKE_USE_OPENSSL)
   if(NOT CMAKE_VERSION VERSION_LESS 3.4)
     list(APPEND CURL_LIBS OpenSSL::SSL OpenSSL::Crypto)
   else()
-      list(APPEND CURL_LIBS OpenSSL::SSL OpenSSL::Crypto)
-      set(CMAKE_REQUIRED_INCLUDES "${OPENSSL_ROOT}/include")
-    endif()
-  else()
     list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES})
     include_directories(${OPENSSL_INCLUDE_DIR})
   endif()
 
   set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIR})
-  endif()
   check_include_file("openssl/crypto.h" HAVE_OPENSSL_CRYPTO_H)
   check_include_file("openssl/err.h"    HAVE_OPENSSL_ERR_H)
   check_include_file("openssl/pem.h"    HAVE_OPENSSL_PEM_H)
@@ -740,11 +738,9 @@ if(ZLIB_FOUND)
     list(APPEND CURL_LIBS ZLIB::ZLIB)
   else()
     list(APPEND CURL_LIBS ${ZLIB_LIBRARIES})
-
-    endif()
-
-    include_directories(${ZLIB_INCLUDE_DIRS})
   endif()
+
+  include_directories(${ZLIB_INCLUDE_DIRS})
   list(APPEND CMAKE_REQUIRED_INCLUDES ${ZLIB_INCLUDE_DIRS})
 endif()
 
