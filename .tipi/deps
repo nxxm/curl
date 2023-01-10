@@ -1,0 +1,7 @@
+{
+  "u" : true
+  ,"nxxm/boringssl:windows" : { "@" : ":b769d2c155fe424f9610799c3972446ff5be9b17", "u": true }
+  ,"tipi-deps/middleware_openssl" : { "@" : "v1.1.1n-tipi", "u" : true}
+  ,"hunter-packages/zlib" : { "@" : "v1.2.11-p1", "u" : true }
+  ,"hunter-packages/c-ares" : { "@" : "v1.14.0-p0", "u" :true }
+}
