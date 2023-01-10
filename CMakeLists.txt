@@ -37,8 +37,7 @@
 # To check:
 # (From Daniel Stenberg) The cmake build selected to run gcc with -fPIC on my box while the plain configure script did not.
 # (From Daniel Stenberg) The gcc command line use neither -g nor any -O options. As a developer, I also treasure our configure scripts's --enable-debug option that sets a long range of "picky" compiler options.
-cmake_minimum_required(VERSION 3.2...3.16 FATAL_ERROR)
-
+cmake_minimum_required(VERSION 3.18)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake;${CMAKE_MODULE_PATH}")
 include(Utilities)
 include(Macros)
@@ -53,7 +52,8 @@ string(REGEX MATCH "#define LIBCURL_VERSION \"[^\"]*"
 string(REGEX REPLACE "[^\"]+\"" "" CURL_VERSION ${CURL_VERSION})
 string(REGEX MATCH "#define LIBCURL_VERSION_NUM 0x[0-9a-fA-F]+"
   CURL_VERSION_NUM ${CURL_VERSION_H_CONTENTS})
-string(REGEX REPLACE "[^0]+0x" "" CURL_VERSION_NUM ${CURL_VERSION_NUM})
+string (REGEX REPLACE "[^0]+0x" "" CURL_VERSION_NUM ${CURL_VERSION_NUM})
+SET(PROJECT_VERSION ${CURL_VERSION})
 
 
 # Setup package meta-data
@@ -118,22 +118,18 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${_CCOPT}")
       endif()
     endforeach()
-    foreach(_CCOPT long-long multichar format-nonliteral sign-conversion system-headers pedantic-ms-format)
-      # GCC only warns about unknown -Wno- options if there are also other diagnostic messages,
-      # so test for the positive form instead
-      string(MAKE_C_IDENTIFIER "OPT${_CCOPT}" _optvarname)
-      check_c_compiler_flag("-W${_CCOPT}" ${_optvarname})
-      if(${_optvarname})
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-${_CCOPT}")
-      endif()
-    endforeach()
-  endif()
-endif()
+  endif(PICKY_COMPILER)
+endif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
 
-if(ENABLE_DEBUG)
+option(CURL_WITH_LIBIDN "Enable IDN" OFF)
+
+if (ENABLE_DEBUG)
   # DEBUGBUILD will be defined only for Debug builds
-  set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:DEBUGBUILD>)
-  set(ENABLE_CURLDEBUG ON)
+  if(NOT CMAKE_VERSION VERSION_LESS 3.0)
+    set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:DEBUGBUILD>)
+  else()
+    set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS_DEBUG DEBUGBUILD)
+  endif()
 endif()
 
 if(ENABLE_CURLDEBUG)
@@ -150,8 +146,11 @@ set(CURL_LIBS "")
 
 if(ENABLE_ARES)
   set(USE_ARES 1)
-  find_package(CARES REQUIRED)
-  list(APPEND CURL_LIBS ${CARES_LIBRARY})
+  find_package(c-ares CONFIG REQUIRED)
+  set(CARES_INCLUDE_DIR "${C-ARES_ROOT}/include")
+  set(CARES_LIBRARY c-ares::cares)
+  list(APPEND CURL_LIBS ${CARES_LIBRARY} )
+  set(CURL_LIBS ${CURL_LIBS} ${CARES_LIBRARY})
 endif()
 
 include(CurlSymbolHiding)
@@ -420,7 +419,30 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif()
 
 if(CMAKE_USE_OPENSSL)
-  find_package(OpenSSL REQUIRED)
+  if(CMAKE_USE_BORINGSSL)
+    find_package(BoringSSL CONFIG REQUIRED)
+    set(OPENSSL_INCLUDE_DIR "${BORINGSSL_ROOT}/include")
+    get_property(
+        imported_configurations
+        TARGET BoringSSL::crypto
+        PROPERTY IMPORTED_CONFIGURATIONS
+    )
+    list(GET imported_configurations 0 imported_configuration)
+    string(TOUPPER "${imported_configuration}" imported_configuration)
+    get_property(
+        crypto_lib
+        TARGET BoringSSL::crypto
+        PROPERTY IMPORTED_LOCATION_${imported_configuration}
+    )
+    get_property(
+        ssl_lib
+        TARGET BoringSSL::ssl
+        PROPERTY IMPORTED_LOCATION_${imported_configuration}
+    )
+    set(OPENSSL_LIBRARIES ${crypto_lib} ${ssl_lib})
+  else()
+    find_package(OpenSSL REQUIRED)
+  endif()
   set(SSL_ENABLED ON)
   set(USE_OPENSSL ON)
 
@@ -445,6 +467,10 @@ if(CMAKE_USE_OPENSSL)
   check_symbol_exists(RAND_status "${CURL_INCLUDES}" HAVE_RAND_STATUS)
   check_symbol_exists(RAND_screen "${CURL_INCLUDES}" HAVE_RAND_SCREEN)
   check_symbol_exists(RAND_egd    "${CURL_INCLUDES}" HAVE_RAND_EGD)
+
+  if(CMAKE_USE_BORINGSSL)
+    set(HAVE_OPENSSL_ENGINE_H FALSE)
+  endif()
 endif()
 
 if(CMAKE_USE_MBEDTLS)
@@ -650,6 +676,8 @@ if(NOT CURL_DISABLE_LDAPS)
   check_include_file_concat("ldapssl.h"  HAVE_LDAPSSL_H)
 endif()
 
+if(CURL_WITH_LIBIDN)
+
 # Check for idn
 option(USE_LIBIDN2 "Use libidn2 for IDN support" ON)
 set(HAVE_LIBIDN2 OFF)
@@ -665,25 +693,26 @@ if(WIN32)
   endif()
 endif()
 
+endif()
+
 # Check for symbol dlopen (same as HAVE_LIBDL)
 check_library_exists("${CURL_LIBS}" dlopen "" HAVE_DLOPEN)
 
 set(HAVE_LIBZ OFF)
 set(HAVE_ZLIB_H OFF)
-set(USE_ZLIB OFF)
-optional_dependency(ZLIB)
-if(ZLIB_FOUND)
-  set(HAVE_ZLIB_H ON)
-  set(HAVE_LIBZ ON)
-  set(USE_ZLIB ON)
+set(HAVE_ZLIB OFF)
+if(CURL_ZLIB)
+  find_package(ZLIB CONFIG REQUIRED)
+  if(ZLIB_FOUND)
+    set(HAVE_ZLIB_H ON)
+    set(HAVE_ZLIB ON)
+    set(HAVE_LIBZ ON)
 
-  # Depend on ZLIB via imported targets if supported by the running
-  # version of CMake.  This allows our dependents to get our dependencies
-  # transitively.
-  if(NOT CMAKE_VERSION VERSION_LESS 3.4)
-    list(APPEND CURL_LIBS ZLIB::ZLIB)
-  else()
+    list(APPEND CURL_LIBS ZLIB::zlib)
+    set(ZLIB_INCLUDE_DIRS "${ZLIB_ROOT}/include")
+
     list(APPEND CURL_LIBS ${ZLIB_LIBRARIES})
+
     include_directories(${ZLIB_INCLUDE_DIRS})
   endif()
   list(APPEND CMAKE_REQUIRED_INCLUDES ${ZLIB_INCLUDE_DIRS})
@@ -718,15 +747,18 @@ if(CURL_ZSTD)
 endif()
 
 #libSSH2
-option(CMAKE_USE_LIBSSH2 "Use libSSH2" ON)
+option(CMAKE_USE_LIBSSH2 "Use libSSH2" OFF)
 mark_as_advanced(CMAKE_USE_LIBSSH2)
 set(USE_LIBSSH2 OFF)
 set(HAVE_LIBSSH2 OFF)
 set(HAVE_LIBSSH2_H OFF)
 
 if(CMAKE_USE_LIBSSH2)
-  find_package(LibSSH2)
+  find_package(Libssh2 CONFIG REQUIRED)
+  set(LIBSSH2_FOUND TRUE)
   if(LIBSSH2_FOUND)
+    set(LIBSSH2_LIBRARY Libssh2::libssh2)
+    set(LIBSSH2_INCLUDE_DIR "${LIBSSH2_ROOT}/include")
     list(APPEND CURL_LIBS ${LIBSSH2_LIBRARY})
     set(CMAKE_REQUIRED_LIBRARIES ${LIBSSH2_LIBRARY})
     list(APPEND CMAKE_REQUIRED_INCLUDES "${LIBSSH2_INCLUDE_DIR}")
@@ -979,15 +1011,24 @@ check_include_file_concat("stdint.h"        HAVE_STDINT_H)
 check_include_file_concat("sockio.h"        HAVE_SOCKIO_H)
 check_include_file_concat("sys/utsname.h"   HAVE_SYS_UTSNAME_H)
 
+
 check_type_size(size_t  SIZEOF_SIZE_T)
+
+
 check_type_size(ssize_t  SIZEOF_SSIZE_T)
 check_type_size("long long"  SIZEOF_LONG_LONG)
+
+
 check_type_size("long"  SIZEOF_LONG)
 check_type_size("short"  SIZEOF_SHORT)
 check_type_size("int"  SIZEOF_INT)
 check_type_size("__int64"  SIZEOF___INT64)
 check_type_size("long double"  SIZEOF_LONG_DOUBLE)
+
+
 check_type_size("time_t"  SIZEOF_TIME_T)
+
+
 if(NOT HAVE_SIZEOF_SSIZE_T)
   if(SIZEOF_LONG EQUAL SIZEOF_SIZE_T)
     set(ssize_t long)
@@ -997,6 +1038,7 @@ if(NOT HAVE_SIZEOF_SSIZE_T)
   endif()
 endif()
 # off_t is sized later, after the HAVE_FILE_OFFSET_BITS test
+
 
 if(HAVE_SIZEOF_LONG_LONG)
   set(HAVE_LONGLONG 1)
@@ -1164,6 +1206,12 @@ foreach(CURL_TEST
     )
   curl_internal_test(${CURL_TEST})
 endforeach()
+
+if(RASPBERRY_PI)
+  # FIXME
+  set(HAVE_GLIBC_STRERROR_R 0 CACHE INTERNAL "")
+  set(HAVE_POSIX_STRERROR_R 1 CACHE INTERNAL "")
+endif()
 
 # Check for reentrant
 foreach(CURL_TEST
@@ -1345,7 +1393,26 @@ if(USE_MANUAL)
   add_subdirectory(docs)
 endif()
 
+#add config installation location parameters before includeing subdirectories
+# Layout. This works for all platforms:
+#   * <prefix>/lib/cmake/<PROJECT-NAME>
+#   * <prefix>/lib/
+#   * <prefix>/include/
+set(config_install_dir "lib/cmake/${PROJECT_NAME}")
+set(include_install_dir "include")
+set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
+
+# Configuration
+set(version_config "${generated_dir}/${PROJECT_NAME}ConfigVersion.cmake")
+set(project_config "${generated_dir}/${PROJECT_NAME}Config.cmake")
+set(targets_export_name "${PROJECT_NAME}Targets")
+set(namespace "${PROJECT_NAME}::")
+
 add_subdirectory(lib)
+
+if(CMAKE_USE_BORINGSSL)
+  target_compile_definitions(libcurl PRIVATE HAVE_BORINGSSL)
+endif()
 
 if(BUILD_CURL_EXE)
   add_subdirectory(src)
@@ -1593,3 +1660,30 @@ if(NOT TARGET uninstall)
       COMMAND ${CMAKE_COMMAND} -P
       ${CMAKE_CURRENT_BINARY_DIR}/CMake/cmake_uninstall.cmake)
 endif()
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file("${version_config}" COMPATIBILITY SameMajorVersion)
+
+# Use variables:
+#   * targets_export_name
+#   * PROJECT_NAME
+configure_package_config_file(
+    "CMake/Config.cmake.in"
+    "${project_config}"
+    INSTALL_DESTINATION "${config_install_dir}"
+)
+
+#   * <prefix>/lib/cmake/Foo/FooConfig.cmake
+#   * <prefix>/lib/cmake/Foo/FooConfigVersion.cmake
+install(
+    FILES "${project_config}" "${version_config}"
+    DESTINATION "${config_install_dir}"
+)
+
+# Config
+#   * <prefix>/lib/cmake/Foo/FooTargets.cmake
+install(
+    EXPORT "${targets_export_name}"
+    NAMESPACE "${namespace}"
+    DESTINATION "${config_install_dir}"
+)
