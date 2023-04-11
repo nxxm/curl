@@ -394,15 +394,15 @@ if(CMAKE_USE_DARWINSSL)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  find_library(COREFOUNDATION_FRAMEWORK "CoreFoundation")
-  if(NOT COREFOUNDATION_FRAMEWORK)
-      message(FATAL_ERROR "CoreFoundation framework not found")
-  endif()
+  #find_library(COREFOUNDATION_FRAMEWORK "CoreFoundation")
+  #if(NOT COREFOUNDATION_FRAMEWORK)
+  #    message(FATAL_ERROR "CoreFoundation framework not found")
+  #endif()
 
-  find_library(SYSTEMCONFIGURATION_FRAMEWORK "SystemConfiguration")
-  if(NOT SYSTEMCONFIGURATION_FRAMEWORK)
-     message(FATAL_ERROR "SystemConfiguration framework not found")
-  endif()
+  #find_library(SYSTEMCONFIGURATION_FRAMEWORK "SystemConfiguration")
+  #if(NOT SYSTEMCONFIGURATION_FRAMEWORK)
+  #   message(FATAL_ERROR "SystemConfiguration framework not found")
+  #endif()
 
   list(APPEND CURL_LIBS "-framework CoreFoundation" "-framework SystemConfiguration")
 
