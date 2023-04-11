@@ -96,6 +96,7 @@ endif()
 target_link_libraries(${LIB_NAME} ${CURL_LIBS})
 
 if(WIN32)
+target_link_libraries(${LIB_NAME} ws2_32)
   add_definitions(-D_USRDLL)
 endif()
 
