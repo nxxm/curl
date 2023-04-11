@@ -1,17 +1,12 @@
 {
-  "packages" : ["CURL"]
+    "u" : true
+  , "packages" : ["CURL"]
   , "targets" : [ "CURL::libcurl" ]
   , "requires" : {
-    "nxxm/boringssl:windows" : { "@" : ":b769d2c155fe424f9610799c3972446ff5be9b17",
+    "nxxm/boringssl" : { "@" : ":c8f02a727e0e628a21918bb5af6a325062a68929",
         "u": true
-      , "packages" : ["BoringSSL"]
-      , "targets" : ["BoringSSL::ssl", "BoringSSL::crypto"]
-    }
-    ,"tipi-deps/middleware_openssl" : { "@" : "v1.1.1n-tipi"
-      , "u" : true
       , "packages" : ["OpenSSL"]
-      , "targets" : ["OpenSSL::SSL", "OpenSSL::Crypto"]
-      , "find_mode" : " "
+      , "targets" : ["OpenSSL::+SSL", "OpenSSL::+Crypto"]
     }
     ,"hunter-packages/zlib" : { 
       "@" : "v1.2.11-p1"
