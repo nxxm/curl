@@ -3,7 +3,7 @@
   , "packages" : ["CURL"]
   , "targets" : [ "CURL::libcurl" ]
   , "requires" : {
-    "nxxm/boringssl" : { "@" : ":c8f02a727e0e628a21918bb5af6a325062a68929",
+    "nxxm/boringssl" : { "@" : "feature/vs-16",
         "u": true
       , "packages" : ["OpenSSL"]
       , "targets" : ["OpenSSL::+SSL", "OpenSSL::+Crypto"]
