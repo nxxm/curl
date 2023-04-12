@@ -220,6 +220,8 @@ int main(void) {
   return 0;
 }" HAVE_STRUCT_TIMEVAL)
 
+unset(CMAKE_TRY_COMPILE_TARGET_TYPE)
+
 if(HAVE_WINDOWS_H)
   set(CMAKE_EXTRA_INCLUDE_FILES winsock2.h)
 else()
@@ -229,12 +231,16 @@ else()
   endif()
 endif()
 
+if (HAVE_LIBWS2_32)
+  set (CMAKE_REQUIRED_LIBRARIES ws2_32)
+endif()
+
 check_type_size("struct sockaddr_storage" SIZEOF_STRUCT_SOCKADDR_STORAGE)
 if(HAVE_SIZEOF_STRUCT_SOCKADDR_STORAGE)
   set(HAVE_STRUCT_SOCKADDR_STORAGE 1)
 endif()
 
-unset(CMAKE_TRY_COMPILE_TARGET_TYPE)
+
 
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")

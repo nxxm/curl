@@ -3,10 +3,10 @@
   , "packages" : ["CURL"]
   , "targets" : [ "CURL::libcurl" ]
   , "requires" : {
-    "nxxm/boringssl" : { "@" : "feature/vs-16",
+    "nxxm/boringssl" : { "@" : ":64b173d5c7acb7e8e270997418685d9a00f0537b",
         "u": true
       , "packages" : ["OpenSSL"]
-      , "targets" : ["OpenSSL::+SSL", "OpenSSL::+Crypto"]
+      , "targets" : ["OpenSSL::SSL", "OpenSSL::Crypto"]
     }
     ,"hunter-packages/zlib" : { 
       "@" : "v1.2.11-p1"
