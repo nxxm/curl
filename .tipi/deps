@@ -1,0 +1,24 @@
+{
+    "u" : true
+  , "packages" : ["CURL"]
+  , "targets" : [ "CURL::libcurl" ]
+  , "requires" : {
+    "nxxm/boringssl" : { "@" : ":64b173d5c7acb7e8e270997418685d9a00f0537b",
+        "u": true
+      , "packages" : ["OpenSSL"]
+      , "targets" : ["OpenSSL::SSL", "OpenSSL::Crypto"]
+    }
+    ,"hunter-packages/zlib" : { 
+      "@" : "v1.2.11-p1"
+      , "u" : true
+      , "packages" : ["ZLIB"]
+      , "targets" : ["ZLIB::zlib"]
+    }
+    , "hunter-packages/c-ares" : { 
+      "@" : "v1.14.0-p0"
+      , "u" :true
+      , "packages" : ["c-ares"]
+      , "targets" : ["c-ares::cares"]
+    } 
+  }
+}
