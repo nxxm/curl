@@ -1,0 +1,30 @@
+{
+    "u" : true
+  , "packages" : ["CURL"]
+  , "targets" : [ "CURL::libcurl" ]
+  , "requires" : {
+    "c-ares/c-ares" : {
+      "@": "v1.34.5",
+      "u": true,
+      "opts" : "set(CARES_STATIC ON  CACHE BOOL \"Build c-ares static\" FORCE) \nset(CARES_SHARED OFF CACHE BOOL \"Build c-ares shared\" FORCE) \nset(CARES_INSTALL ON  CACHE BOOL \"Install c-ares\" FORCE) \nset(CARES_STATIC_PIC ON  CACHE BOOL \"Build static PIC c-ares\" FORCE) \nset(BUILD_TESTING OFF CACHE BOOL \"Disable tests\" FORCE)",
+      "packages" : ["c-ares"]
+    },
+    "hunter-packages/zlib": {
+      "@": "v1.2.11-p1",
+      "packages": [
+          "ZLIB"
+      ],
+      "targets": [
+          "ZLIB::zlib"
+      ],
+      "u": true
+    },
+    "nxxm/boringssl" : { "@" : ":a1c0809622ce25bde0190a933df933acfef2510b",
+      "opts": "set (BUILD_TESTING OFF) \n",
+      "u": true
+      , "packages" : ["OpenSSL", "BoringSSL"]
+      , "targets" : ["OpenSSL::SSL", "OpenSSL::Crypto", "BoringSSL::decrepit"]
+      , "find_mode" : " "
+    }
+  }
+}

@@ -22,8 +22,7 @@
 #
 ###########################################################################
 # by Tetetest and Sukender (Benoit Neil)
-
-cmake_minimum_required(VERSION 3.7...3.16 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.27)
 message(STATUS "Using CMake version ${CMAKE_VERSION}")
 
 # Collect command-line arguments for buildinfo.txt.
@@ -52,11 +51,14 @@ include(Macros)
 include(CMakeDependentOption)
 include(CheckCCompilerFlag)
 
+
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/curl/curlver.h" _curl_version_h_contents REGEX "#define LIBCURL_VERSION( |_NUM )")
 string(REGEX MATCH "#define LIBCURL_VERSION \"[^\"]*" _curl_version ${_curl_version_h_contents})
 string(REGEX REPLACE "[^\"]+\"" "" _curl_version ${_curl_version})
 string(REGEX MATCH "#define LIBCURL_VERSION_NUM 0x[0-9a-fA-F]+" _curl_version_num ${_curl_version_h_contents})
 string(REGEX REPLACE "[^0]+0x" "" _curl_version_num ${_curl_version_num})
+SET(PROJECT_VERSION ${_curl_version_num})
+
 unset(_curl_version_h_contents)
 
 message(STATUS "curl version=[${_curl_version}]")
@@ -197,9 +199,9 @@ endif()
 option(CURL_WERROR "Turn compiler warnings into errors" OFF)
 option(PICKY_COMPILER "Enable picky compiler options" ON)
 option(BUILD_CURL_EXE "Build curl executable" ON)
-option(BUILD_SHARED_LIBS "Build shared libraries" ON)
-option(BUILD_STATIC_LIBS "Build static libraries" OFF)
-option(BUILD_STATIC_CURL "Build curl executable with static libcurl" OFF)
+option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+option(BUILD_STATIC_LIBS "Build static libraries" ON)
+option(BUILD_STATIC_CURL "Build curl executable with static libcurl" ON)
 option(ENABLE_ARES "Enable c-ares support" OFF)
 option(CURL_DISABLE_INSTALL "Disable installation targets" OFF)
 
@@ -373,15 +375,12 @@ set(LIBCURL_PC_REQUIRES_PRIVATE "")
 
 if(ENABLE_ARES)
   set(USE_ARES 1)
-  find_package(Cares REQUIRED)
-  list(APPEND CURL_LIBS ${CARES_LIBRARIES})
+  find_package(c-ares CONFIG REQUIRED)
+  set(CARES_INCLUDE_DIR "${C-ARES_ROOT}/include")
+  set(CARES_LIBRARY c-ares::cares)
+  list(APPEND CURL_LIBS ${CARES_LIBRARY} )
+  set(CURL_LIBS ${CURL_LIBS} ${CARES_LIBRARY})
   list(APPEND CURL_LIBDIRS ${CARES_LIBRARY_DIRS})
-  list(APPEND LIBCURL_PC_REQUIRES_PRIVATE ${CARES_PC_REQUIRES})
-  include_directories(SYSTEM ${CARES_INCLUDE_DIRS})
-  link_directories(${CARES_LIBRARY_DIRS})
-  if(CARES_CFLAGS)
-    string(APPEND CMAKE_C_FLAGS " ${CARES_CFLAGS}")
-  endif()
 endif()
 
 include(CurlSymbolHiding)
@@ -738,18 +737,18 @@ if(CURL_WINDOWS_SSPI AND NOT WINDOWS_STORE)
 endif()
 
 if(_use_core_foundation_and_core_services)
-  find_library(COREFOUNDATION_FRAMEWORK NAMES "CoreFoundation")
-  mark_as_advanced(COREFOUNDATION_FRAMEWORK)
-  if(NOT COREFOUNDATION_FRAMEWORK)
-    message(FATAL_ERROR "CoreFoundation framework not found")
-  endif()
+  #find_library(COREFOUNDATION_FRAMEWORK NAMES "CoreFoundation")
+  #mark_as_advanced(COREFOUNDATION_FRAMEWORK)
+  #if(NOT COREFOUNDATION_FRAMEWORK)
+  #  message(FATAL_ERROR "CoreFoundation framework not found")
+  #endif()
   list(APPEND CURL_LIBS "-framework CoreFoundation")
 
-  find_library(CORESERVICES_FRAMEWORK NAMES "CoreServices")
-  mark_as_advanced(CORESERVICES_FRAMEWORK)
-  if(NOT CORESERVICES_FRAMEWORK)
-    message(FATAL_ERROR "CoreServices framework not found")
-  endif()
+  #find_library(CORESERVICES_FRAMEWORK NAMES "CoreServices")
+  #mark_as_advanced(CORESERVICES_FRAMEWORK)
+  #if(NOT CORESERVICES_FRAMEWORK)
+  #  message(FATAL_ERROR "CoreServices framework not found")
+  #endif()
   list(APPEND CURL_LIBS "-framework CoreServices")
 endif()
 
@@ -926,14 +925,22 @@ endif()
 # and before calling curl_openssl_check_exists().
 
 set(HAVE_LIBZ OFF)
+
+
 curl_dependency_option(CURL_ZLIB ZLIB "ZLIB")
+find_package(ZLIB CONFIG REQUIRED)
+
 if(ZLIB_FOUND)
   set(HAVE_LIBZ ON)
-  # Depend on ZLIB via imported targets. This allows our dependents to
-  # get our dependencies transitively.
-  list(APPEND CURL_LIBS ZLIB::ZLIB)
+  set(HAVE_ZLIB_H ON)
+  set(HAVE_ZLIB ON)
+  set(HAVE_LIBZ ON)
+
+  list(APPEND CURL_LIBS ZLIB::zlib)
+  set(ZLIB_INCLUDE_DIRS "${ZLIB_ROOT}/include")
   list(APPEND LIBCURL_PC_REQUIRES_PRIVATE "zlib")
 endif()
+
 
 set(HAVE_BROTLI OFF)
 curl_dependency_option(CURL_BROTLI Brotli "brotli")
@@ -1291,7 +1298,7 @@ else()
 endif()
 
 # Check for libidn2
-option(USE_LIBIDN2 "Use libidn2 for IDN support" ON)
+option(USE_LIBIDN2 "Use libidn2 for IDN support" OFF)
 set(HAVE_IDN2_H OFF)
 set(HAVE_LIBIDN2 OFF)
 if(USE_LIBIDN2 AND NOT USE_APPLE_IDN AND NOT USE_WIN32_IDN)
@@ -1311,7 +1318,7 @@ if(USE_LIBIDN2 AND NOT USE_APPLE_IDN AND NOT USE_WIN32_IDN)
 endif()
 
 # libpsl
-option(CURL_USE_LIBPSL "Use libpsl" ON)
+option(CURL_USE_LIBPSL "Use libpsl" OFF)
 mark_as_advanced(CURL_USE_LIBPSL)
 set(USE_LIBPSL OFF)
 
@@ -1329,13 +1336,17 @@ if(CURL_USE_LIBPSL)
 endif()
 
 # libssh2
-option(CURL_USE_LIBSSH2 "Use libssh2" ON)
+option(CURL_USE_LIBSSH2 "Use libssh2" OFF)
 mark_as_advanced(CURL_USE_LIBSSH2)
 set(USE_LIBSSH2 OFF)
 
 if(CURL_USE_LIBSSH2)
-  find_package(Libssh2)
+  find_package(Libssh2 CONFIG REQUIRED)
+set(LIBSSH2_FOUND TRUE)
   if(LIBSSH2_FOUND)
+    set(LIBSSH2_LIBRARY_DIRS Libssh2::libssh2)
+    set(LIBSSH2_LIBRARY Libssh2::libssh2)
+    set(LIBSSH2_INCLUDE_DIR "${LIBSSH2_ROOT}/include")
     set(CURL_LIBS ${LIBSSH2_LIBRARIES} ${CURL_LIBS})  # keep it before TLS-crypto, compression
     list(APPEND CURL_LIBDIRS ${LIBSSH2_LIBRARY_DIRS})
     set(LIBCURL_PC_REQUIRES_PRIVATE ${LIBSSH2_PC_REQUIRES} ${LIBCURL_PC_REQUIRES_PRIVATE})
@@ -2048,11 +2059,30 @@ if(PERL_FOUND)
   add_subdirectory(docs)
 endif()
 
+#add config installation location parameters before includeing subdirectories
+# Layout. This works for all platforms:
+#   * <prefix>/lib/cmake/<PROJECT-NAME>
+#   * <prefix>/lib/
+#   * <prefix>/include/
+set(config_install_dir "lib/cmake/${PROJECT_NAME}")
+set(include_install_dir "include")
+set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
+
+# Configuration
+set(version_config "${generated_dir}/${PROJECT_NAME}ConfigVersion.cmake")
+set(project_config "${generated_dir}/${PROJECT_NAME}Config.cmake")
+set(targets_export_name "${PROJECT_NAME}Targets")
+set(namespace "${PROJECT_NAME}::")
+
 add_subdirectory(scripts)  # for shell completions
 
 list(REMOVE_DUPLICATES CURL_LIBDIRS)
 
 add_subdirectory(lib)
+
+if(HAVE_BORINGSSL)
+  target_compile_definitions(libcurl_static PRIVATE HAVE_BORINGSSL)
+endif()
 
 if(BUILD_CURL_EXE)
   add_subdirectory(src)
@@ -2471,6 +2501,33 @@ if(NOT CURL_DISABLE_INSTALL)
     add_custom_target(curl_uninstall
       COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/CMake/cmake_uninstall.cmake")
   endif()
+
+  include(CMakePackageConfigHelpers)
+  write_basic_package_version_file("${version_config}" COMPATIBILITY SameMajorVersion)
+
+  # Use variables:
+  #   * targets_export_name
+  #   * PROJECT_NAME
+  configure_package_config_file(
+      "CMake/Config.cmake.in"
+      "${project_config}"
+      INSTALL_DESTINATION "${config_install_dir}"
+  )
+
+  #   * <prefix>/lib/cmake/Foo/FooConfig.cmake
+  #   * <prefix>/lib/cmake/Foo/FooConfigVersion.cmake
+  install(
+      FILES "${project_config}" "${version_config}"
+      DESTINATION "${config_install_dir}"
+  )
+
+  # Config
+  #   * <prefix>/lib/cmake/Foo/FooTargets.cmake
+  install(
+      EXPORT "${targets_export_name}"
+      NAMESPACE "${namespace}"
+      DESTINATION "${config_install_dir}"
+  )
 
   install(FILES "${PROJECT_SOURCE_DIR}/scripts/wcurl"
     DESTINATION ${CMAKE_INSTALL_BINDIR}

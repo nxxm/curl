@@ -98,6 +98,10 @@ if(NOT DEFINED SHARE_LIB_OBJECT)
   endif()
 endif()
 
+if(WIN32)
+  target_link_libraries(${LIB_NAME} ws2_32)
+endif()
+
 if(SHARE_LIB_OBJECT AND CMAKE_VERSION VERSION_GREATER_EQUAL 3.12)
   set(LIB_OBJECT "libcurl_object")
   add_library(${LIB_OBJECT} OBJECT ${HHEADERS} ${CSOURCES})  # Requires CMake 3.12

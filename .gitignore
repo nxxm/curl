@@ -28,6 +28,7 @@
 /.vs
 /bld/
 /build/
+/build
 /builds/
 /stats/
 __pycache__
