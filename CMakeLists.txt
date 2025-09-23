@@ -318,26 +318,26 @@ if(ENABLE_THREADED_RESOLVER)
 endif()
 
 # Check for all needed libraries
-check_library_exists_concat("${CMAKE_DL_LIBS}" dlopen HAVE_LIBDL)
-check_library_exists_concat("socket" connect      HAVE_LIBSOCKET)
+check_library_exists("${CMAKE_DL_LIBS}" dlopen HAVE_LIBDL)
+check_library_exists("socket" connect      HAVE_LIBSOCKET)
 check_library_exists("c" gethostbyname "" NOT_NEED_LIBNSL)
 
 # Yellowtab Zeta needs different libraries than BeOS 5.
 if(BEOS)
   set(NOT_NEED_LIBNSL 1)
-  check_library_exists_concat("bind" gethostbyname HAVE_LIBBIND)
-  check_library_exists_concat("bnetapi" closesocket HAVE_LIBBNETAPI)
+  check_library_exists("bind" gethostbyname HAVE_LIBBIND)
+  check_library_exists("bnetapi" closesocket HAVE_LIBBNETAPI)
 endif()
 
 if(NOT NOT_NEED_LIBNSL)
-  check_library_exists_concat("nsl"    gethostbyname  HAVE_LIBNSL)
+  check_library_exists("nsl"    gethostbyname  HAVE_LIBNSL)
 endif()
 
 check_function_exists(gethostname HAVE_GETHOSTNAME)
 
 if(WIN32)
-  check_library_exists_concat("ws2_32" getch        HAVE_LIBWS2_32)
-  check_library_exists_concat("winmm"  getch        HAVE_LIBWINMM)
+  check_library_exists("ws2_32" getch        HAVE_LIBWS2_32)
+  check_library_exists("winmm"  getch        HAVE_LIBWINMM)
 endif()
 
 # check SSL libraries
@@ -571,7 +571,7 @@ if(NOT CURL_DISABLE_LDAP)
   if(WIN32)
     option(USE_WIN32_LDAP "Use Windows LDAP implementation" ON)
     if(USE_WIN32_LDAP)
-      check_library_exists_concat("wldap32" cldap_open HAVE_WLDAP32)
+      check_library_exists("wldap32" cldap_open HAVE_WLDAP32)
       if(NOT HAVE_WLDAP32)
         set(USE_WIN32_LDAP OFF)
       endif()
@@ -594,8 +594,8 @@ if(NOT CURL_DISABLE_LDAP)
   else()
     # Check for LDAP
     set(CMAKE_REQUIRED_LIBRARIES ${OPENSSL_LIBRARIES})
-    check_library_exists_concat(${CMAKE_LDAP_LIB} ldap_init HAVE_LIBLDAP)
-    check_library_exists_concat(${CMAKE_LBER_LIB} ber_init HAVE_LIBLBER)
+    check_library_exists(${CMAKE_LDAP_LIB} ldap_init HAVE_LIBLDAP)
+    check_library_exists(${CMAKE_LBER_LIB} ber_init HAVE_LIBLBER)
 
     set(CMAKE_REQUIRED_INCLUDES_BAK ${CMAKE_REQUIRED_INCLUDES})
     set(CMAKE_LDAP_INCLUDE_DIR "" CACHE STRING "Path to LDAP include directory")
@@ -682,7 +682,7 @@ if(CURL_WITH_LIBIDN)
 option(USE_LIBIDN2 "Use libidn2 for IDN support" ON)
 set(HAVE_LIBIDN2 OFF)
 if(USE_LIBIDN2)
-  check_library_exists_concat("idn2" idn2_lookup_ul HAVE_LIBIDN2)
+  check_library_exists("idn2" idn2_lookup_ul HAVE_LIBIDN2)
 endif()
 
 if(WIN32)
