@@ -98,10 +98,6 @@ if(NOT DEFINED SHARE_LIB_OBJECT)
   endif()
 endif()
 
-if(WIN32)
-  target_link_libraries(${LIB_NAME} ws2_32)
-endif()
-
 if(SHARE_LIB_OBJECT AND CMAKE_VERSION VERSION_GREATER_EQUAL 3.12)
   set(LIB_OBJECT "libcurl_object")
   add_library(${LIB_OBJECT} OBJECT ${HHEADERS} ${CSOURCES})  # Requires CMake 3.12
@@ -145,6 +141,7 @@ if(BUILD_STATIC_LIBS)
   add_library(${PROJECT_NAME}::${LIB_STATIC} ALIAS ${LIB_STATIC})
   if(WIN32)
     set_property(TARGET ${LIB_STATIC} APPEND PROPERTY COMPILE_DEFINITIONS "CURL_STATICLIB")
+    target_link_libraries(${LIB_STATIC} ws2_32)
   endif()
   target_link_libraries(${LIB_STATIC} PRIVATE ${CURL_LIBS})
   # Remove the "lib" prefix since the library is already named "libcurl".
